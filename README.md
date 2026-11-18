@@ -1,5 +1,7 @@
 # Cubic cutwidth by retiming a Gaussian vertex ordering
 
+A two-pass ordering now gives $\kappa\le 0.130647519423167665$, a further decrease of $2.7\times10^{-8}$ from the Yukon-reviewed result below. It uses the same numerical certificate. [Proof of the two-pass bound](research/two-pass-bound.md)
+
 In a cubic graph layout, list the vertices from left to right and count the edges crossing each gap. The largest count is the width of the layout. This research fork gives an AI-assisted proof of an improvement of **at least $2\times10^{-8}$ in the asymptotic cutwidth per vertex** over the limiting value of the previous Gaussian crossing-cover method. [Graph theorem](submission/cutwidth.md#0-statement-and-proof-map)
 
 ## Bound and circuit consequence
