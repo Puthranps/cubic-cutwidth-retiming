@@ -1,20 +1,20 @@
-# A strict improvement to the cubic Gaussian crossing-cover layout
+# Cubic cutwidth below the limiting Gaussian crossing-cover coefficient
 
-## 0. Statement and notation
+## 0. Statement and proof map
 
-A cubic multigraph has degree three at each vertex, counting a loop twice. In a vertex ordering, count the edges with exactly one endpoint in each prefix. Cutwidth is the minimum over orders of the largest such count. Loops never cross.
+A cubic multigraph has degree three at every vertex, counting a loop twice. For a vertex ordering, count the edges with exactly one endpoint in each prefix. Its cutwidth is the minimum over orders of the maximum of those counts. Each crossing edge counts once.
 
-**Theorem 1.** There exists one nonnegative nondecreasing function h with h(n)/n tending to zero such that every cubic multigraph H on n vertices satisfies
+**Theorem 1.** There exists a single nonnegative nondecreasing function h with h(n)/n tending to zero such that every cubic multigraph H on n vertices satisfies
 
-    cw(H) <= gamma n + h(n),    gamma = 0.130647566423157664341749378137356.
+    cw(H) <= gamma n + h(n),    gamma = 0.130647546423167665.
 
-Let w_d=(1+d/3)2^(-d/2). In the centered unit-variance cubic-tree Gaussian wave with correlations w_d at distance d, write p_j for the probability that consecutive vertices alternate signs all along a given j-edge path. For an odd J, the earlier crossing-cover argument uses the finite coefficient
+Let w_d=(1+d/3)2^(-d/2). For the centered unit-variance Gaussian wave on the cubic tree with covariance w_d at distance d, let p_j be the probability that consecutive vertices alternate signs along a fixed j-edge path. Define the finite sums
 
     Gamma_J = sum_(j=1)^J (-1)^(j+1) 3*2^(j-2) p_j.
 
-Write Gamma for the infimum of these odd partial sums. Theorem (S7) below gives a uniform saving of 10^(-14) below every Gamma_J, hence below Gamma. An exact quadrature enclosure in certificate.md gives Gamma_83 < 0.130647566423167664341749378137356. That inequality and (S7) imply the displayed rational gamma. The conditional pivotal probability in Section 7.4 is checked by a second finite exact sum in the same program.
+Gamma is the limit of the alternating sums and the infimum of their odd truncations, as proved in certificate.md. The strengthened comparison proves that the worst-case asymptotic cubic cutwidth per vertex is at most Gamma minus 0.00000002. The displayed rational uses Gamma <= Gamma_47 < 0.130647566423167665. The finite computations check the series enclosure and the two independent parts of the layout improvement.
 
-Sections 1–6 and 8–10 retain the arguments of galarnon42 and the subsequent CircuitBreaker contributors credited in proof.md. The Hellinger-profile comparison builds on Arthur Ostapenko's submission. McGuire, Schlesinger and Williams developed the underlying circuit transfer and Gaussian ordering approach. The earlier matching-width literature includes Jeong, Sæther and Telle, arXiv:1507.02384. Section 7 gives the new local retiming and quantitative interpolation argument.
+Sections 1–6 give galarnon42's matching-cover layout and finite-profile comparison, building on Arthur Ostapenko and McGuire, Schlesinger and Williams. Section 7 supplies the earlier retiming lemma and the elementary pivotal configuration from our first submission 4c133ffa-7452-42c6-9629-d7821ee890d4. Section 7.5 applies the quantitative proofs in certificate.md Sections 8 and 9. Sections 8–10 transfer the result to arbitrary cubic multigraphs with a uniform remainder. Matching-cut submodularity is also treated by Jeong, Sæther and Telle, arXiv:1507.02384.
 
 ## 1. Symmetric submodular Gaussian comparison
 
@@ -673,9 +673,24 @@ As .039 sqrt(1-s)>.038, the stated pivotal probability follows. The adjacent zer
 
 All other pairs and the rest of the interpolation have nonpositive contributions. Exact lifting divides the cover expectation by its degree, and Lemma 1.1(b) gives the same upper bound at every threshold on the base. Select the finite-profile errors and the original concentration and layout errors below the slack between this saving and 10^(-14). This proves (S7) also for the bad-center case.
 
-**Theorem 7.1.** For every eta>0 there is N_eta such that every connected simple cubic graph H on n>=N_eta vertices satisfies cw(H)<=(gamma+eta)n.
+### 7.5 Combining the two quantitative improvements
 
-Apply (S7) with the fixed odd index 83 and the strict rational inequality Gamma_83 < 0.130647566423167664341749378137356. The finite radii, noise, concentration mesh and size cutoff may be chosen using eta alone. This proves the assertion. The following sections give the uniform extension to all cubic multigraphs.
+Use the excess D_e of Section 7.2 with the new fixed cutoff eta=0.000425. A good center has every edge of its lifted radius-three ball below or equal to this cutoff. Let g be their number on an n-vertex connected simple cubic graph. Take finite profiles as close to critical as required in both companion proofs. The number of retained good centers is at least g/15 by Section 7.1. For every |t|<=.67 the good-center calculation in certificate.md Section 8 gives a uniform trigger probability q with q/15>0.00000002. Section 7.1 shows that each trigger saves one unit of the crossing-cover number, with no double counting.
+
+For a center that is not good, some edge in its ball has D_e>eta. One endpoint of that edge is within distance two of the center. A given edge can therefore be observed by at most 2+4+8=14 centers. There are at least (n-g)/14 such distinct heavy edges. The finite-profile covariance surplus on each is at least .99 eta. The integrated two-orientation witness estimate of certificate.md Section 9 gives per unit of surplus at least K=0.000672905379119700, up to arbitrarily small finite-profile losses. All other derivative terms have nonpositive sign. After exact division by the cover degree, this saves at least .99 K eta (n-g)/14 from the unretimed expectation. Lemma 1.1(b) transfers this zero-threshold upper bound to every threshold. The good-center retiming then saves the additional qg/15 at each central threshold. In particular
+
+    .99 K eta /14 > 0.00000002,      q/15 > 0.00000002.
+
+For completeness the outer thresholds already have slack. For adjacent centered normal scores of correlation r, the probability of opposite threshold bits is
+
+    p(t,r) = (1/pi) integral from r to 1 of exp(-t^2/(1+s))/sqrt(1-s^2) ds
+           <= exp(-t^2/2) arccos(r)/pi.
+
+Indeed differentiate the bivariate normal lower-quadrant probability at (t,t) with respect to r. The density satisfies partial_r f=partial_x partial_y f, and the integrated derivative equals f(t,t). At r=1 the two threshold bits coincide. This yields the formula by summing the two crossing orientations. Count every crossing edge as an upper bound on the matching size. Hellinger comparison gives adjacent correlation at least the truncated tree value, arbitrarily close to 2sqrt(2)/3. Since arccos(2sqrt(2)/3)<.34, pi>3.14, and exp(-.67^2/2)<1-.67^2/2+(.67^2/2)^2/2, the limiting upper bound (3/2)p(.67,2sqrt(2)/3) is less than .1302. The cosine estimate follows from the Taylor upper bound cos(.34)<=1-.34^2/2+.34^4/24<2sqrt(2)/3. Every odd Gamma_J is at least Gamma >= Gamma_46 > .1306 by certificate.md. Thus the outer thresholds satisfy the same claimed saving. Retiming never increases their crossing-cover number.
+
+All inequalities used for the reported saving have positive slack. Choose alpha near critical, then a finite truncation radius and positive tie noise, to meet their finitely many accuracy conditions simultaneously. At any fixed threshold the retimed value is the original F minus a sum of finite-range trigger indicators. Their variances are O_R(n), as in Section 7.3. On central mesh intervals use the at-most-22 local multiplicity bound there. On the bounded outer intervals use the original mesh bounds of Section 6. Beyond a sufficiently large fixed tail cutoff use the vertex tail counts. With concentration and a sufficiently fine fixed mesh these losses are arbitrarily small per vertex. Resolving the ties and converting the matching cover to a graph ordering add at most 22+6. For each fixed odd J this proves the asymptotic graph bound Gamma_J minus 0.00000002.
+
+**Theorem 7.1.** For every positive epsilon there is N_epsilon such that every connected simple cubic graph H on n>=N_epsilon vertices satisfies cw(H)<=(gamma+epsilon)n. Apply the preceding proof with the fixed J=47 and Gamma_47 < 0.130647566423167665. All cutoffs are uniform in the input graph. The following reductions complete the proof of Theorem 1.
 
 ## 8. Kernel compression
 

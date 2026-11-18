@@ -4,7 +4,7 @@
 Status: one of the supporting proof files of this submission (with `cutwidth.md`, `certificate.md` and `krs.md`).
 Theorem 1 below is conditional on the graph hypothesis H(γ,h) and uses premise P1, which `krs.md` proves;
 everything else is proved here. `cutwidth.md` (with `certificate.md` for its finite inequalities) proves H(γ,h) for
-the γ=32661891605789416085437344534339/250000000000000000000000000000000 and a uniform monotone little-o remainder; `proof.md` §5 combines this file with `cutwidth.md`.
+the γ=26129509284633533/200000000000000000 and a uniform monotone little-o remainder; `proof.md` §5 combines this file with `cutwidth.md`.
 
 **Credit.** The route (circuit -> wire graph -> cutwidth-ordered read-once nondeterministic program ->
 rectangle edge counting) is from S. McGuire, S. Schlesinger, R. Williams, "Explicit functions requiring larger

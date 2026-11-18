@@ -2,13 +2,13 @@
 
 For the single total language L in P given in Section 1, there exists an integer N_0>=256 such that for every integer length N>=N_0,
 
-    C_B2(L_N) >= c_* N,    c_* = 48270900384055950810649810365841/10000000000000000000000000000000.
+    C_B2(L_N) >= c_* N,    c_* = 482709062427011829815939834410753/100000000000000000000000000000000.
 
-The circuit model counts every gate of the full binary basis and permits arbitrary sharing, as specified below. The declared remainder is identically zero. The proof first gives a uniform sublinear error at the strictly larger coefficient c_0=1+1/(2 gamma), where gamma=0.130647566423157664341749378137356.
+The circuit model counts every gate of the full binary basis and permits arbitrary sharing, as specified below. The declared remainder is identically zero. The proof first gives a uniform sublinear error at the strictly larger coefficient c_0=1+1/(2 gamma), where gamma=0.130647546423167665.
 
-The new graph argument changes a Gaussian ordering when a seven-vertex sign witness permits a crossing matching to shrink. A quantitative covariance interpolation handles vertices where identifications in the base graph make this witness scarce. The asymptotic worst-case cutwidth ratio is at most Gamma-10^(-14), where Gamma is the limiting alternating-path coefficient of the earlier global cover method. The displayed rational gamma uses an upward rounding of Gamma, certified by the order-82 and order-83 path sums. Section 7 of cutwidth.md and the added quadrature estimates in certificate.md contain the new arguments.
+The new graph argument changes a Gaussian ordering when a seven-vertex sign witness permits a crossing matching to shrink. A quantitative covariance interpolation handles vertices where identifications in the base graph make this witness scarce. The asymptotic worst-case cutwidth ratio is at most Gamma-0.00000002, where Gamma is the limiting alternating-path coefficient of the earlier global cover method. The displayed rational gamma uses an upward rounding of Gamma, certified by the order-46 and order-47 path sums. The two complementary estimates are proved in certificate.md Sections 8 and 9. Section 7.5 of cutwidth.md combines them before the uniform multigraph reduction.
 
-The immediate precursor is DarkWingMcQuack's submission 3f2be7ea-aa22-4f7e-98e9-23b40557dbcf at commit 737818f9911e00e9d4909c644c771e0724fb6c37, which supplies the quantified declaration format and the coefficient 630647566423167697/130647566423167697. Its immediate numeric predecessor 0514f3af-5d65-4556-82df-a89e2a3ae4e1 established the finite order-39 estimate. ac0dd6e1 and 38e961ae supplied fixed-point contraction and factorization respectively. The original global crossing-cover and finite path construction is due to galarnon42, submission fcf21648-1b1f-463c-b5bc-c50f53f63436. The mathematical route from circuits to layouts is due to McGuire, Schlesinger and Williams. Arthur Ostapenko supplied the retained norm-one family, Hellinger comparison and algebraic transfer, crediting mooselumph for the validated-prefix device and the earlier submission fd902316-f679-4965-aca9-419a9ee5ec22.
+The immediate precursor is our first retiming submission 4c133ffa-7452-42c6-9629-d7821ee890d4, whose hosted reviewer marked its 10^(-14) graph saving and eventual circuit coefficient 48270900384055950810649810365841/10000000000000000000000000000000 valid. Here the needed components are supplied in full and the new finite checks execute afresh. The preceding source is DarkWingMcQuack's submission 3f2be7ea-aa22-4f7e-98e9-23b40557dbcf at commit 737818f9911e00e9d4909c644c771e0724fb6c37, which supplies the quantified declaration format and the coefficient 630647566423167697/130647566423167697. Its immediate numeric predecessor 0514f3af-5d65-4556-82df-a89e2a3ae4e1 established the finite order-39 estimate. ac0dd6e1 and 38e961ae supplied fixed-point contraction and factorization respectively. The original global crossing-cover and finite path construction is due to galarnon42, submission fcf21648-1b1f-463c-b5bc-c50f53f63436. The mathematical route from circuits to layouts is due to McGuire, Schlesinger and Williams. Arthur Ostapenko supplied the retained norm-one family, Hellinger comparison and algebraic transfer, crediting mooselumph for the validated-prefix device and the earlier submission fd902316-f679-4965-aca9-419a9ee5ec22.
 
 The single language submitted to CircuitBreaker is the validated-prefix norm-graph language described below. The original McGuire–Schlesinger–Williams paper uses Li's sumset extractor. The universal graph inequality can also be inserted in their circuit-to-kernel theorem. These are separate applications.
 
@@ -84,7 +84,7 @@ Every gate is counted once; inputs, wires and output selection cost nothing. The
 
 ## 4. From layouts to circuits
 
-The finite computations in certificate.md compare Gamma_83 with 0.130647566423167664341749378137356 and verify the rational sum for the pivotal event. Section 7 of cutwidth.md proves that for each fixed odd J the asymptotic cubic coefficient is at most Gamma_J-10^(-14). Theorem 1 of that file extends the bound to loops, parallel edges, bridges and disconnected components and supplies a uniform nonnegative nondecreasing h_0 with h_0(D)=o(D). Thus the graph hypothesis H(gamma_0,h_0) of circuit.md holds with gamma_0=32661891605789416085437344534339/250000000000000000000000000000000. The algebraic norm-graph rectangle bound is proved in krs.md. The sweep simulation, wire-graph kernel conversion and all-length transfer are proved in circuit.md.
+The finite computations in certificate.md certify the good-center and tilted edge-credit sums, compare Gamma_47 with 0.130647566423167665 and verify the rational sum for the pivotal event. Section 7 of cutwidth.md proves that for each fixed odd J the asymptotic cubic coefficient is at most Gamma_J-0.00000002. Theorem 1 of that file extends the bound to loops, parallel edges, bridges and disconnected components and supplies a uniform nonnegative nondecreasing h_0 with h_0(D)=o(D). Thus the graph hypothesis H(gamma_0,h_0) of circuit.md holds with gamma_0=26129509284633533/200000000000000000. The algebraic norm-graph rectangle bound is proved in krs.md. The sweep simulation, wire-graph kernel conversion and all-length transfer are proved in circuit.md.
 
 ## 5. Assembling the eventual theorem
 
@@ -103,7 +103,7 @@ Here gamma_0, c_0 and h_0 are fixed. Since s_0=O(N) and tends to infinity,
 Every other displayed summand of R_0(N)/N also tends to zero. Thus R_0(N)/N->0
 along ALL integer lengths, with the same R_0 for every circuit computing L_N.
 
-Here c_0=157661891605789416085437344534339/32661891605789416085437344534339. Choose c_* = floor(10^32 c_0)/10^32 = 48270900384055950810649810365841/10000000000000000000000000000000. Their difference is the strictly positive rational 907662794849171067612622885901/326618916057894160854373445343390000000000000000000000000000000. Since R_0(N)/N tends to zero along all integer lengths, there exists N_0 such that R_0(N)/N <= c_0-c_* for every N>=N_0. Substitution gives C_B2(L_N)>=c_* N for every such length. This also proves the finite projection with coefficient c_* and exponent 1. The threshold is existential. All witnesses, prefixes and leftover bits are handled by the fixed definition above.
+Here c_0=126129509284633533/26129509284633533. Choose c_* = floor(10^32 c_0)/10^32 = 482709062427011829815939834410753/100000000000000000000000000000000. Their difference is the strictly positive rational 25005955400419651/2612950928463353300000000000000000000000000000000. Since R_0(N)/N tends to zero along all integer lengths, there exists N_0 such that R_0(N)/N <= c_0-c_* for every N>=N_0. Substitution gives C_B2(L_N)>=c_* N for every such length. This also proves the finite projection with coefficient c_* and exponent 1. The threshold is existential. All witnesses, prefixes and leftover bits are handled by the fixed definition above.
 
 ## 6. Sources and reproduction
 
@@ -127,6 +127,8 @@ Here c_0=157661891605789416085437344534339/32661891605789416085437344534339. Cho
 - Gaspers, "Path Decompositions of Sparse Graphs via Gaussian Sweeps and Faster Exponential Algorithms", https://arxiv.org/abs/2611.05146.
 - Kollar--Ronyai--Szabo, "Norm-graphs and bipartite Turan numbers", Combinatorica
   16(3) (1996), 399--406; the needed theorem is proved in `krs.md`.
+
+The first retiming version is publicly archived at https://github.com/Puthranps/cubic-cutwidth-retiming/tree/7b0d2587b3da62877fea4fae2d4fa9a370f3919f.
 
 From the submission directory, reproduce the numerical certificate with
 
