@@ -521,216 +521,89 @@ apply to this same finite tensor rule.
 
 The implementation checks that every scaled upper endpoint in B is at most S. For a scaled product M*A with rounded upper endpoint at most 8, it omits the nonnegative lower contribution and charges the whole upper endpoint times S to the dot product. If the sum of all scaled upper endpoints times the scaled upper endpoint of C is at most S, the exact output lies in [0,1/S]. This permits a short circuit. All other products use the floor and ceiling divisions above. Symmetric reuse of exponential factors is exact.
 
-## 6. Parameters, exact comparisons and reproduction
+## 6. Parameters and target
 
-Run the standard-library program with Python 3 and its default parameters. The declared input is the empty JSON object. It checks the 93 Gauss nodes on [0,3] for each of 47 path lengths, with 100-decimal-digit directed enclosures and exact 224-bit fixed-point grid arithmetic. The output verifies
+`python -I -B certify.py` checks 75 Gauss nodes on [0,3] at each of 27 path lengths, using 100-digit directed Decimal enclosures and exact 224-bit fixed-point contractions. It verifies
 
-    0.1306475664231676642 < Gamma_46 <= Gamma
-        <= Gamma_47 < 0.130647566423167665.
+    0.130647566419 < Gamma_26 <= Gamma <= Gamma_27 < 0.130647566425.
 
-The even lower and the odd upper are separate comparisons in the code. The graph constant also uses the 0.000000047 saving proved in cutwidth.md Section 7.6. A separate exact rational Riemann sum in the same executable gives a floor of 18079200775 for 10^12 times its two-private-edge event lower sum. The corresponding probability is greater than .018 as used in the structural proof.
+It also checks the preparatory pivotal-event floor 18079200775 at scale 10^12 from cutwidth.md Section 7.4, the all-center lower sum, the two covariance integrals, the central and outer rational margins, and the final score arithmetic. The public scripts and documentation of Galarnon42, DarkWingMcQuack and subsequent contributors supply the preceding path calculation. Each finite premise used here is reproduced by this executable, with the corresponding analytic error bounds above and below.
+
+## 7. Conditional means and strip inequalities
+
+Section 7.5 of cutwidth.md contains the good-patch integral and its numerical table. For convenience this section records how to obtain the covariances between its named scores and the three conditioning coordinates. For a pair of linear forms sum the products of coefficients times w_d. For an upper error add η times the sum of its positive products times k_d; for a lower error add η times the negative sum. Take k_d=d²(√2)^(d−1), k_0=0. The root regression coefficient for the residual of a linear form is its covariance with the root O. Since O has variance one the conditional covariance is obtained by subtracting the product of these two root covariances. The conditional centered means and variances in Section 7.5 are computed with these operations.
+
+## 8. Integrated credit from adjacent and distance-two pairs
+
+This note supplements the previously proved six-contrast tilted private-edge method. It yields the effective per-edge coefficient
+
+    K >= 0.016117814324835210
+
+per unit of total adjacent covariance excess, before the chosen finite-profile approximation allowance. The old tilted coefficient was 0.000672905379119700. This note analyzes the heavy-edge term only; a uniform improvement of the cubic cutwidth constant also requires the companion good-center and noncentral-threshold bounds.
+
+### Preliminaries
+
+Use the finite high-girth cover and base Hellinger fields of the cutwidth proof. The normalized critical tree wave X has w_d=(1+d/3)2^(-d/2) and lambda=2sqrt(2). Let Y be an independent limiting pullback of base fields and Z=sqrt(1-s)X+sqrt(s)Y. P denotes the two coordinates being differentiated and we condition on Z_P=0. In the standard Gaussian Price interpolation a pair contributes its covariance excess times the zero-pair density times the conditional mixed difference of the crossing-matching number F. All these mixed differences are nonpositive. Raw finite covariance differences are nonnegative by fiber Cauchy-Schwarz.
+
+The preceding tilted proof gives two elementary bounds on Y. For each vertex t its wave defect R_t=sum_(q~t)Y_q-lambda Y_t has standard deviation at most c=3-lambda, and each centered contrast sqrt(3)(Y_a-Y_b) of distinct siblings has variance at most one. For completeness, the full normalized alpha-profile f on the universal tree satisfies sum_(q~t)f_q=(alpha^(-1)+2alpha)f_t except for a correction at t of norm tending to zero as alpha increases to 1/sqrt(2); also sum f_q^2<=(alpha^(-2)+2alpha^2) f_t^2 pointwise. Triangle and Cauchy-Schwarz on each fiber bound the sum of the pushed rows between (lambda-o(1))b_t minus a vector of norm o(1) and (3+o(1))b_t. Thus the defect norm is at most 3-lambda in the limit. For siblings, base covariance is at least w_2=5/6. Both are variance upper bounds after conditioning at zero. The covariances in any fixed finite patch form a compact family. The high-girth finite cover converges locally to the critical wave, after choosing alpha, finite truncation and positive tie noise successively before graph size as in the submitted proof.
+
+We use the following Gaussian facts. If W is a nonnegative even function and g standard Gaussian, translating the density and averaging the opposite linear exponents gives E W(g+h)>=exp(-||h||^2/2) E W(g). Given a fixed linear contrast vector H of the centered conditional Y, tilting by exp(-r||H||^2/2), r=s/(1-s), gives total mass det(I+r Cov(H))^(-1/2) and a centered Gaussian law with every variance decreased. This follows by writing Y as a linear map of a standard normal vector and completing the square. Finally, for jointly centered Gaussian scalar forms V_i, the probability of the intersection of symmetric strips |V_i|<a_i is at least the product of the marginal strip probabilities (Sidak's Gaussian rectangle inequality). One proof conditions on the last coordinate. The probability of the earlier symmetric convex box under the resulting Gaussian translation is an even log-concave function of the conditioning coordinate by Prékopa's theorem. It therefore decreases with its absolute value and has nonnegative covariance with the indicator of the final symmetric interval. Induct, using a small independent-noise limit for singular covariances. Write H(t)=Pr(|N(0,1)|<t) for t>=0.
+
+### Integrating the individual margins on adjacent pairs
+
+At an adjacent pair the submitted tilted proof uses two sign-reflected private-edge events, whose indicators sum to at most -Delta F, and sixteen choices of the labeled private branches. For fixed labels the two-orientation witness is even in six independent critical contrasts g. The actual field, divided by sqrt(1-s), is the ideal recursion in g+sqrt(r)H_Y plus sqrt(r) times sibling-shared wave-defect errors. At a selected endpoint the three errors are R_i/2, (lambda/4)R_i+R_a/2, and (3/4)R_i+(lambda/4)R_a+R_z/2. The other side has the same formulas. Hence their standard deviations are bounded by tau=(.086,.208,.336) in the tilted law as well. Each H_Y contrast has variance at most one, so the tilt mass is at least (1-s)^3 by Hadamard's inequality.
+
+Instead of fixed margins choose the actual absolute margins of the realized ideal wave. Conditional on Y, require sufficient symmetric margins to absorb its realized six errors. This condition is even in g, so the same translation bound applies. Now integrate over g and then the tilted Y. For each ideal witness sample the six actual margin thresholds are fixed; Sidak's inequality gives the product of their individual Gaussian strip probabilities. The adaptively labeled events are disjoint per orientation: if the specified signs persist, each specified-sign outer neighbor and opposite child is uniquely determined. Both orientations may be counted because their simultaneous occurrence forces -Delta F=2.
+
+On one side x is the absolute outer-neighbor amplitude, k is the opposite-child amplitude, and z the absolute difference of its two children. Their three same-pair minimum margins are x, k, and (lambda k+x-z)/2. Let f_A be the density of |N(0,1/12)| and f_D that of |N(0,1/3)|. Given x the opposite child has amplitude k=(|D|-lambda x)/2 when positive, and its sibling has amplitude lambda x+k. Then one oriented surviving witness has probability at least (1-s)^3 J(s)^2, where
+
+    J(s)=integral_(x,k>=0) f_A(x) 2f_D(2k+lambda x)
+      H(x/(tau_1 sqrt(r))) H(k/(tau_2 sqrt(r)))
+      integral_(0<=z<=lambda k+x) f_D(z)
+          H((lambda k+x-z)/(2 tau_3 sqrt(r))) dz dk dx.
+
+The square uses independence of the two sides in the centered ideal wave; no independence of their actual perturbations is assumed. The limiting adjacent zero-pair density is at least 3/(2pi)>.477 throughout interpolation since its correlation is at least w_1. The checker certifies the integral of one oriented lower probability is at least .003781166862163664. Counting two orientations and using .477 gives
+
+    K_1 >= .003607233186504135.
+
+### A different pivotal event at distance two
+
+Suppose P=(u,v), the path between them is u-w-v, and the cover has girth sufficiently large that the displayed patch is a tree. Let t be the third neighbor of w. Require t to have the sign of w, and all four outer neighbors of u,v to have the opposite sign to w. No conditions on any more distant signs are needed.
+
+On this event Delta_uv F<=-1. Remove u,v,w and let the exterior crossing matching size be M. Write A,B for the possible zero-or-one increases when u, respectively v, is individually restored with the color of w and can connect to its outer neighbors. If both centers have the other color, the only new edges form the two-edge star at w and the maximum is M+1. The two unequal assignments yield M+1+A and M+1+B: one center independently matches w. If both agree with w, their combined addition can increase exterior matching size by at most A+B. Indeed they add vertices in the same bipartition class. If A=B=0, a maximum matching of the exterior cannot gain an augmenting path starting at either new vertex individually, and an augmenting path cannot pass through the other new unmatched vertex. If exactly one indicator is zero, gaining two would contradict that zero on removing the other new vertex from the matching. The both-one bound is immediate. This proves the mixed-difference bound by the two equal values minus the two unequal values.
+
+For the two endpoints conditioned to be zero in the ideal wave, w has variance 1/33 and t=lambda w by the wave equation. At each endpoint its two outer values are -w/2 plus and minus G/(2sqrt(3)) with two independent standard contrasts G, independent of the central value. More generally the regression of X_w on X_P is b(X_u+X_v), b=w_1/(1+w_2)=4sqrt(2)/11. Use the three ideal independent standard coordinates sqrt(33)(X_w-b(X_u+X_v)), G_u, G_v. For the base use their counterparts H_0=sqrt(33)(Y_w-b(Y_u+Y_v)), H_u,H_v. Before conditioning,
+
+    Var H_0 <= 1 + 33·2 b^2(1-w_2) = 43/11 <3.91.
+
+This follows by replacing the two negatively signed adjacent covariances by their lower bound w_1 and the positively signed endpoint covariance by one in the variance expansion. Both other variances are at most one. The tilt mass for these three coordinates is consequently at least (1-s)/sqrt(1+3.91r).
+
+Given Z_P=0 and Y, the central score of Z/sqrt(1-s) is exactly the ideal reconstructed w using g+sqrt(r)H. The third neighbor's discrepancy from lambda w is sqrt(r)R_w; the two outer siblings at u, respectively v, have the shared discrepancy sqrt(r)R_u/2, respectively sqrt(r)R_v/2. For each fixed Y, ensure the event by requiring the symmetrically enlarged robust margins in the ideal reconstruction. This is an even event in the three driving coordinates, so translation, tilting, and then integrating over the ideal g give the same product-of-strips bound. Write f_0 for the |N(0,1/33)| density. At x=|w| the margin for the third neighbor is lambda x, and for each of the two outer pairs the allowed defect magnitude is x-z where z=|N(0,1/3)|<x. Thus
+
+    E[-Delta_uv F | Z_P=0] >= (1-s)/sqrt(1+3.91r)
+       integral_(x>=0) f_0(x) H(lambda x/(c sqrt(r)))
+         [ integral_(0<=z<=x) f_D(z) H((x-z)/(c sqrt(r))) dz ]^2 dx.
+
+This event already includes both signs of w, so there is no extra factor of two. The checker certifies its integrated probability at least .007684450176540460. Pair correlation is at least w_2 in the limit, so the zero density is at least 3/(pi sqrt(11))>.2878. Therefore each distance-two excess has coefficient
+
+    K_2 >= .002211584760808344.
+
+### Counting the distance-two excess without double counting
+
+On the high-girth finite cover let b_y denote the unit key rows pulled back from the base (including the repeated base tie-noise coordinates if present). Temporarily measure the raw excesses from the exact critical values: let S_d be the sum of b-row covariance minus w_d over unordered pairs at cover distance d. Every distance-two pair has a unique common neighbor, since the cover girth exceeds four. Put E_y=sum_(x~y)b_x-lambda b_y. Since lambda=3w_1 and lambda^2=3+6w_2,
+
+    sum_y <b_y,E_y> = 2 S_1,
+    2 S_2 = sum_y (||sum_(x~y)b_x||^2-lambda^2)
+          = 4 lambda S_1 + sum_y ||E_y||^2.
+
+Consequently S_2>=2lambda S_1. For actual finite-profile base-minus-cover differences, replacing w_d by the finite high-girth covariances at d=1,2 costs at most an arbitrarily small constant times the cover order. All actual differences have the favorable sign. The total Price gain from the two disjoint pair sets therefore has effective coefficient K_1+2lambda K_2 for adjacent excess; exact matching-cut lifting then divides by the covering degree. Using 2lambda>5.65684 gives the coefficient stated at the start. If eta is the good-center cutoff, Section 7.5 of cutwidth.md charges the nine edges of the named patches, yielding the estimate min(6q,K eta/6) before arbitrarily small finite-profile errors.
+
+### Exact reproduction and finite transfer
+
+The submitted `certify.py` contains both integrals and their shared scalar helpers. Run:
 
     python -I -B certify.py
 
-With the default settings the program exits successfully only if both series comparisons and the pivotal check pass. It prints one JSON object with each alternating-path probability enclosure and the final comparisons. The proof of the uniform graph improvement and the circuit transfer is in the companion manuscripts.
+The shared exact scalar routines use a spatial step 1/200 and interpolation mesh s_j=(j/80)^2, j=1,...,79. Integrands and cell bounds decrease in s, so use the right endpoint and omit the untouched final tail. Each density is evaluated at a spatial cell upper endpoint and each strip at a lower amplitude endpoint. Inner remaining margins are rounded down before using a grid convolution. The program uses the conservative bounds 2.82842<lambda<2.82843 and c<.17158. For each absolute normal strip probability, round its argument down to .001 by integer square root, cap at 3.3, and integrate the degree-23 odd Taylor lower polynomial of exp(-t^2/2), with prefactor .7978. For an exponential density, use its seventh-degree odd Taylor lower polynomial at z/64, then square downwards six times. All positive fixed-point floors at scale 10^18 are downward bounds, and density prefactors are certified from pi<3.1416. The executable prints floor(K_1·10^18)=3607233186504135, floor(K_2·10^18)=2211584760808344 and floor((K_1+5.65684 K_2)·10^18)=16117814324835211.
 
-The directed quadrature, Markov factorization, Gaussian moment bound and integer contraction derive from CircuitBreaker submissions fcf21648, 38e961ae, ac0dd6e1, 0514f3af and 3f2be7ea. The paired completion, coordinate envelope, root enclosure optimization, sparse arithmetic and pivotal sum are used here to certify the sharper bound.
-
-
-## 7. Finite checks for the strengthened retiming argument
-
-The same executable evaluates the good-center lower sum described in certificate.md Section 8 and the integrated tilted conditional probabilities in certificate.md Section 9. All entries of those two computations are either rational or rounded downward by integer divisions in a proved lower bound. The good sum must exceed 15 times 0.00000002. The integrated per-edge saving must have floor 672905379119700 at scale 10^18. The original .04-margin pivotal sum remains available for the preparatory Section 7.4. The program also checks the odd upper and even lower enclosures, then emits one JSON record.
-
-
-## 8. A quantitative probability bound at good centers
-
-Let $\eta=17/40000=.000425$. In the notation of the retiming rule, take an arbitrary fixed naming of neighbors $a,b,u$ at $o$, and of children $w,w'$ of $u$. Use $a_1,a_2$ and $w_1,w_2$ for the two outward children of $a$ and $w$. If all lifted edges in the radius-three tree ball have Hellinger excess at most $\eta$, then at every $0\le t\le .67$,
-
-\[
- \Pr\{Z_o>t,\ Z_a,Z_b,Z_{a_1},Z_{a_2},Z_w,Z_{w_1},Z_{w_2}<t\}>3.6190\,10^{-7}.
-\]
-
-The assertion holds for the finite-profile, positive-tie-noise field once the parameters are sufficiently accurate, uniformly over the graph. Reflection gives the negative thresholds. The original conflict graph selects at least $g/15$ of the $g$ good vertices. Hence their simultaneous expected improvement exceeds $2.4126\,10^{-8}g$. One fixed orientation at each center suffices.
-
-#### Row estimates
-
-Work first with the complete normalized radial rows $f_x(z)\propto\alpha^{d(x,z)}$ on the universal tree and their pushed rows $b_x(p)=\|f_x|_{\pi^{-1}(p)}\|_2$. Write $\lambda=2\sqrt2$, $\lambda_\alpha=\alpha^{-1}+2\alpha$ and $w_d=(1+d/3)2^{-d/2}$. All $o(1)$ terms below are uniform in the base graph and tend to zero as $\alpha\uparrow1/\sqrt2$, followed by sufficiently accurate truncation and noise choices.
-
-For vertices joined by a good tree path of length $d$ put $E_{xy}=\langle b_x,b_y\rangle-\langle f_x,f_y\rangle$. Then
-
-\[
- 0\le E_{xy}\le d^2\alpha^{-(d-1)}\eta=(k_d+o(1))\eta,
- \qquad k_d=d^2(\sqrt2)^{d-1},\quad k_0=0.                    \tag{1}
-\]
-
-Indeed, if $e_x(p)$ is the normalized fiber direction, $2E_{xy}=\sum_p b_x(p)b_y(p)\|e_x(p)-e_y(p)\|^2$. For successive vertices $i-1,i$ in the path the ratio $b_x(p)b_y(p)/(b_{i-1}(p)b_i(p))$ is at most $\alpha^{-(d-1)}$ by the adjacent norm-ratio bounds. Telescope the unit directions in the weighted Euclidean norm and use $E_{i-1,i}\le\eta$. As $w_d+k_d\eta<1$ for $1\le d\le6$, distinct tree vertices in the radius-three ball have distinct base projections. Equivalently the finite field covariances satisfy $c_{xy}\in[w_d-o(1),w_d+k_d\eta+o(1)]$. All local paths used here remain inside that ball.
-
-For each of $v=o,a,u,w$ the centered Gaussian wave defect $D_v=\sum_{y\sim v}Z_y-\lambda Z_v$ satisfies
-
-\[
-   \operatorname{sd}(D_v)\le\sqrt{3(3-\lambda)\eta}+o(1)<.01480.       \tag{2}
-\]
-
-To see this let $R_v=\sum_{y\sim v}b_y-\lambda_\alpha b_v$. Except at $z=v$, the sum of the three neighbor entries at $z$ over the tree is $\lambda_\alpha f_v(z)$ and the sum of their squares is $(\alpha^{-2}+2\alpha^2)f_v(z)^2$. At $z=v$ the linear formula is short by $q_\alpha=(\alpha^{-1}-\alpha) f_v(v)=o(1)$ and the sum of squares is smaller. The fiber triangle inequality gives $R_v+q_\alpha\mathbf1_{\pi(v)}\ge0$ coordinatewise. The fiber sums of squares and Cauchy–Schwarz give
-
-\[
- R_v\le [\sqrt{3(\alpha^{-2}+2\alpha^2)}-\lambda_\alpha] b_v.
-\]
-
-Also $\langle b_v,R_v\rangle\le3\eta+3r_1(\alpha)-\lambda_\alpha=3\eta+o(1)$. Multiply the upper bound for the nonnegative vector $R_v+q_\alpha\mathbf1_{\pi(v)}$ by that same vector coordinatewise and sum. This gives $\|R_v\|^2\le (3-\lambda)3\eta+o(1)$, proving (2). In passing to the actual field the finite truncation and tie noise perturb each of this bounded number of rows by an arbitrarily small amount. The finite root variance is one. All rounded inequalities used subsequently are strict at the limiting parameter values.
-
-#### Three coordinates and their conditional means
-
-Set $O=Z_o$, $R=2Z_u-Z_a-Z_b$, $Q=\sqrt3(Z_{w'}-Z_w)$. Subtract their respective regressions on $O$ from $R,Q$, and call the covariance of the resulting pair $K$. In the ideal critical wave the three starting coordinates have covariance $I_3$. Write $O=t+x$ and take the two residual coordinates to equal $K(y,z)^T$, with $x,y,z>0$. Their joint density in $dx\,dy\,dz$ is
-
-\[
- (2\pi)^{-3/2}\sqrt{\det K}\exp[-((t+x)^2+(y,z)K(y,z)^T)/2].      \tag{3}
-\]
-
-The mean of $Z_v$ under these conditions is
-
-\[
- c_{vo}(t+x)+[\operatorname{Cov}(Z_v,R)-c_{vo}\operatorname{Cov}(O,R)]y
-             +[\operatorname{Cov}(Z_v,Q)-c_{vo}\operatorname{Cov}(O,Q)]z.
-\]
-
-The $t$ term is at most $t$. The coefficients on $x,y,z$ are bounded **above** as follows, including sufficiently small finite approximations:
-
-| $v$ | $x$ | $y$ | $z$ |
-|---|---:|---:|---:|
-| $a$ or $b$ | .9433 | −.1610 | .0172 |
-| $a_1$ or $a_2$ | .8358 | −.2196 | .0368 |
-| $w$ | .8358 | .4730 | −.2810 |
-| $w_1$ or $w_2$ | .7148 | .5055 | −.3920 |
-
-Here are details to reproduce the table and density bound. Compute each covariance of two linear forms by summing products of the coefficients times $w_d$ and add error up to $\eta$ times the sum of the *positive* products times $k_d$, or down to the corresponding negative sum, by (1). Thus the error multipliers for $\operatorname{Cov}(O,R)$ and $\operatorname{Cov}(O,Q)$ are $\pm2$ and $\pm4\sqrt6$. For $\operatorname{Var}R,\operatorname{Var}Q,\operatorname{Cov}(R,Q)$ the ranges are $[-8k_2,2k_2],[-6k_2,0],\pm\sqrt3(2+2k_3)$. For the four rows in order the ideal $(c_{vo},\operatorname{Cov}(Z_v,R),\operatorname{Cov}(Z_v,Q))$ are
-
-\[
- (w_1,-1/6,0),\ (w_2,-\lambda/12,0),\ (w_2,\lambda/6,-1/(2\sqrt3)),\ (w_3,1/2,-\lambda/(4\sqrt3)).
-\]
-
-Their one-sided error multipliers from (1), before the regression subtraction, are respectively $(k_1,2k_2,\sqrt3 k_3)$, $(k_2,2k_3,\sqrt3k_4)$, $(k_2,2k_1,\sqrt3k_2)$ and $(k_3,2k_2,\sqrt3k_3)$. For each $v$ use $(w_d+\eta k_d)2\eta$ or $(w_d+\eta k_d)4\sqrt6\eta$ to bound the regression subtraction above. This gives the four displayed upper bounds. The same estimates give $K_{11}\le1.005$, $K_{22}\le1+o(1)$, $|K_{12}|<.029$ and $(2\pi)^{-3/2}\sqrt{\det K}>.0615$. In particular, for all sufficiently accurate finite profiles,
-
-\[
- (y,z)K(y,z)^T\le1.035y^2+1.030z^2\quad (y,z\ge0),
-\]
-
-by $2yz\le y^2+z^2$ with the strict slack just displayed.
-
-#### The remaining centered Gaussian fluctuations
-
-Condition on these three coordinates and subtract conditional means from every remaining coordinate. Use defect tolerances $|D_v-\mathbb E[D_v\mid O,R,Q]|\le r$ at the four stars. Also constrain the centered halves of the three differences $Z_a-Z_b,Z_{a_1}-Z_{a_2},Z_{w_1}-Z_{w_2}$ in absolute value by $d_1,d_2,d_3$ respectively. The root fluctuation is zero, as are those of $R,Q$. The star identities and the fixed sibling differences now bound the absolute fluctuations at the four rows of the table by
-
-\[
- r/3+d_1,\quad 1.415(r/3+d_1)+r/2+d_2,\quad .972r,\quad 2.043r+d_3.
-\]
-
-Indeed the fluctuation at $u$ is the root defect divided by three. At $w$ its bound is $(\lambda/6+1/2)r$ since $Q$ is fixed. At a child of $w$ the midpoint has bound $(\lambda/2)(.972r)+(1/6+1/2)r<2.043r$.
-
-Conditional variances are at most the unconditional variances. By (1) each half-difference has standard deviation at most $1/\sqrt{12}+o(1)<1/3.46$. The Gaussian rectangle inequality gives a product lower bound for the seven constraints, even with correlated or singular residuals. For completeness, given one centered Gaussian coordinate $X$ the other coordinates have conditional law $W_0+vX$ with $W_0$ an independent centered Gaussian. For a symmetric rectangle $C$, $h(s)=\Pr(W_0+vs\in C)$ is even and decreases with $|s|$. In the nondegenerate case write its integral by layer cake over centered ellipsoidal density level sets $L$. The nonempty intersections $C\cap(L+vs)$ have even volumes whose $1/d$ powers are concave in $s$ on their support by Brunn–Minkowski, so each decreases on $s\ge0$. Consequently $\mathbb E[h(X)\mid |X|\le c]\ge \mathbb E h(X)$. Induction over coordinates proves the product bound. Add independent Gaussian noise tending to zero to get the singular case; positive rectangle faces have zero mass for centered one-dimensional Gaussian marginals, including those of zero variance. Zero-width constraints can simply receive probability lower bound zero.
-
-For $d_i>0$ the checker uses $H(3.46d_i)$, where $H(u)=.797v(1-v^2/6)$, $v=\min(1,\max(0,u))$. This follows from $e^{-s^2/2}\ge1-s^2/2$ and $\sqrt{2/\pi}>.797$. For defect tolerances $r=.01705,.02370,.03185$, (2) permits standardized thresholds $1.15,1.60,2.15$, giving lower masses $.748,.889,.967$ respectively. For example integrate $.797\sum_{j=0}^{11}(-s^2/2)^j/j!$ from zero to the corresponding threshold, obtaining lower bounds $.74902,.88941,.96736$. Raising the stated masses to the fourth power handles the four defects.
-
-#### Finite rational lower sum
-
-`certify.py (good_trigger_certificate)` uses boxes of side lengths $1/200,1/40,1/40$ in $x,y,z$ on $[0,.2]\times[0,3.5]\times[0,6.5]$. On each cell take the table's worst signed endpoints and negate them to obtain margins $A,B,C,D$. For each of the three tolerances with $C>.972r$ and $D>2.043r$ put
-
-\[
- U=\min\{A-r/3,(B-r/2)/1.415-r/3\},\quad
- d_1\in\{.5U,.8U\},\quad d_2=B-r/2-1.415(d_1+r/3),\quad d_3=D-2.043r.
-\]
-
-Discard nonpositive cases. For every valid choice the centered rectangle fits inside the trigger, using its conditional mean bound. Equalities have probability zero in the unconditional field with positive tie noise. Take the highest lower bound among these alternatives, multiply by (3) at its conservative upper quadratic and upper box endpoints, and sum. The checker bounds each required exponential $e^{-v}$ from below by $(1-v/4096)^{4096}$ with downward fixed-point rounding after every squaring. Every margin and product is evaluated downwards or with the unfavorable endpoint. It returns
-
-\[
- \left\lfloor 10^{15}\times(\text{lower sum})\right\rfloor=361900864.
-\]
-
-Thus each good center has the claimed probability at each central threshold. Finite-radius concentration, mesh interpolation, and key-tie handling are unchanged.
-
-
-## 9. Integrated covariance gain at a heavy edge
-
-This replaces the small-noise estimate in the adjacent pivotal-witness argument. The notation of that argument is as follows. X is the field on a sufficiently high-girth finite cover, Y is an independent pullback of the Gaussian base field, P=(i,j) is an adjacent pair, and Z=sqrt(1-s)X+sqrt(s)Y is conditioned on Z_P=0. The two sign-reversed private-edge witnesses each force the centered mixed difference of the crossing-cover function F to be at most -1. If both occur its value is -2, since all four outer neighbors can simultaneously be matched to their private leaves and the only additional central cost is the crossing indicator of ij.
-
-The integrated gain per unit of raw adjacent covariance excess is at least
-
-    K = 0.000672905379119700.
-
-As usual arbitrary fixed finite approximation losses can be absorbed in the o(n) conclusion. Exact lifting divides by the degree of the cover. The same gain applies at every threshold by the unmodified F's zero-threshold maximum.
-
-### Uniform control of the wave equation error
-
-The ideal cover wave has lambda=2sqrt(2) and covariance w_d=(1+d/3)2^(-d/2). Write f_x for the full normalized positive alpha^distance tree row and b_x for its pushforward by fiber norms, with alpha increasing to 1/sqrt(2). For all source coordinates z except x exactly one neighbor is nearer to z. Therefore
-
-    sum_{y~x} f_y = (alpha^(-1)+2alpha) f_x
-                    -(alpha^(-1)-alpha) f_x(x) 1_x,
-    sum_{y~x} f_y^2 <= (alpha^(-2)+2alpha^2) f_x^2
-
-pointwise. Here f_x(x) tends to zero. On each fiber, the triangle inequality for the first expression and Cauchy-Schwarz on the three norms in the second imply
-
-    (alpha^(-1)+2alpha)b_x - o(1) 1_{projection(x)}
-       <= sum_{y~x} b_y <= sqrt(3(alpha^(-2)+2alpha^2)) b_x.
-
-All row norms equal one. Thus in every limit of finite local base Gaussian covariances,
-
-    sd(R_x) <= c=3-lambda,    R_x=sum_{y~x} Y_y-lambda Y_x.
-
-The normalized finite truncation and independent tie noise approximate the full-profile rows uniformly, as in the submitted proof, so these bounds apply in the near-critical limiting argument. For any two siblings, their contrast H=sqrt(3)(Y_child1-Y_child2) has variance at most one in this limit: covariance domination gives Cov(Y_child1,Y_child2)>=w_2=5/6. Both variance bounds remain upper bounds after conditioning on Z_P=0.
-
-### Symmetric translation of six independent contrasts
-
-It suffices first to work with the exact ideal cover wave X and any limiting Gaussian pullback Y satisfying these bounds. A label choice specifies one of the two outer neighbors at each endpoint and one of the two outward children of each selected neighbor. Thus there are sixteen choices. For a fixed choice, the two orientations of the private-edge event require signs on the four outer neighbors, both children of each selected parent, and both children of each selected opposite child. Require margins m_d>0 at depths d=1,2,3. Under either orientation, success uniquely specifies the four label choices. Let W(g) be the sum of the two corresponding indicators in an ideal wave with P=0. Then W is even. It depends on six independent standard contrasts g: one at each endpoint, one at each of the two selected parents, and one at each of the two selected opposite children. All are independent of the original cover central pair X_P. A sibling pair in X has mean (lambda X_parent-X_grandparent)/2 and half-difference g/(2sqrt(3)).
-
-Condition now on Z_P=0 and on the entire Y, so that the standard contrast vector g from X still has its original law. Put r=s/(1-s) and let H be the corresponding six contrasts of Y. Reconstruct the patch through the ideal recursion with zero endpoints and contrast vector g+sqrt(r)H, then multiply by sqrt(1-s). Its discrepancy from the actual Z values consists entirely of sqrt(s) times the wave defects of Y. For any sibling pair the two errors are identical. Up to the factor sqrt(s), at the three depths the discrepancies are respectively
-
-    R_i/2,
-    (lambda/4) R_i + R_a/2,
-    (3/4)R_i+(lambda/4)R_a+R_z/2,
-
-where a is the selected outer parent, z its selected opposite child; the other side uses j in place of i. These formulas follow by substituting the ideal and actual child recursions successively (lambda^2=8). Their standard deviations even before conditioning are bounded strictly by .086,.208,.336, respectively, by the triangle inequality and the bound c. For the fixed labels it suffices to control two absolute errors at each depth, since siblings share the error.
-
-For any nonnegative even W and an independent standard Gaussian vector g,
-
-    E W(g+h) >= exp(-||h||^2/2) E W(g).
-
-Translate the Gaussian density and average the two signs of its linear exponent under g -> -g, using cosh>=1. If all six absolute wave errors (without sqrt(s)) are smaller than (m_d-.0001)/sqrt(r), whenever W(g+sqrt(r)H) is positive the corresponding actual signs are successful. Thus, averaging over Y conditional on Z_P=0, the probability of surviving labeled witnesses is at least E W(g) times
-
-    E [ exp(-r||H||^2/2) 1[all six errors small] | Z_P=0 ].
-
-The exponential tilt of this centered conditional Gaussian law is still Gaussian and decreases every variance. Indeed write the conditional Y as B times a standard normal vector, the six contrasts as A times that vector, and note that the tilted driving covariance is (I+r A^T A)^(-1)<=I. The total mass of the tilt is det(I+r Cov(H|Z_P=0))^(-1/2), at least (1+r)^(-3)=(1-s)^3 by Hadamard's inequality and the six unit upper variance bounds. Apply a union bound to the two absolute errors at each depth under the tilted law. This lower-bounds the last display by
-
-    (1-s)^3 [1-4 sum_{d=1}^3 Phi(-(m_d-.0001)/(sigma_d sqrt(r)))],
-    (sigma_1,sigma_2,sigma_3)=(.086,.208,.336).
-
-The bound does not depend on the label choice. Sum the sixteen choices. The ideal total E W equals 2 Q(m_1,m_2,m_3), where Q is the one-orientation probability given by the submitted two-dimensional half-normal integral, with the lower amplitude endpoints x>=m_1, k>=m_2 and distribution argument lambda k+x-2m_3. At most one successful labeling per orientation can contribute on any actual realization. The two orientations' sum is dominated by -Delta F, including when both succeed.
-
-This limiting lower bound transfers uniformly over the finite cover/base pairs for s in each closed cell in [0,.42], up to an arbitrarily small loss. Otherwise extract a violating sequence with finite patch covariance of X tending to the ideal wave, local Y covariances convergent by compactness, and s tending to a value in that cell. The two-by-two conditioning covariance stays invertible because s<=.42 and the cover's limiting pair is nonsingular. The limiting Y satisfies both structural variance bounds proved above. Conditional Gaussian convergence applies, and every exterior score in the patch has positive conditional variance, since the (1-s) times the independent cover residual variance given its own endpoints is positive. Therefore the probabilities of the finitely many strict sign cylinders converge, including their two-orientation sum. This contradicts the limiting uniform bound. The graph outside the patch is arbitrary throughout.
-
-### Reproducible finite arithmetic
-
-Use the following cells. The end coordinate is in units of .00001 and margins are in units of .01. The preceding cell ends at the left endpoint, starting at zero.
-
-      50  2  2  2        100  2  2  4        200  2  4  4
-     300  2  4  4        500  2  4  6        800  2  6  6
-    1200  2  6  8       1800  2  8 10       2500  4  8 10
-    3500  4 10 12       5000  4 10 14       7500  4 14 18
-   10000  6 14 18      14000  6 16 22      18000  6 20 26
-   24000  8 22 30      32000 10 24 34      42000 12 30 42
-
-The companion exact checker evaluates Q from below on the region x<=.65 and k<=.85, tessellated by squares of side .01. Here f_A is the |N(0,1/12)| density, and f_D,H_D are the |N(0,1/3)| density and distribution. The formula evaluated is
-
-    Q=[ integral_(x>=m1) f_A(x) integral_(k>=m2)
-        2 f_D(2k+lambda x) H_D(lambda k+x-2m3) dk dx ]^2.
-
-Indeed x is the amplitude at each pair of outer neighbors and k is the amplitude of the chosen neighbor's opposite child. The latter has children of its own sign with margins m3 precisely when their contrast has absolute value at most lambda k+x-2m3. The other child of the private parent has amplitude lambda x+k>=m2. The two ends are independent in the conditioned ideal wave. Use upper square endpoints for decreasing densities, lower square endpoints for the CDF, and the bounds 2.828<lambda<2.829. The half-normal coefficients exceed 11/4 and 11/8 by pi<22/7. A lower exponential is the odd Taylor polynomial through degree seven at z/64, followed by six downward-rounded squarings. For the CDF integrate the odd Taylor lower polynomial for exp(-3t^2/2) through degree nineteen in 3t^2/2, capping the argument at 5/4 by monotonicity; at nonpositive arguments the CDF is zero. The checker floor-rounds positive terms at scale 10^18. For a Gaussian tail upper bound, round the positive argument down to .001 using integer square root, cap it at three, then subtract from one half the integral of the odd Taylor lower polynomial for exp(-t^2/2) through degree nineteen in t^2/2, times .3988<1/sqrt(2pi).
-
-For each cell the checker subtracts 10^(-9) from its Q lower bound, multiplies by the positive survival and tilt lower bound at the right endpoint and by the cell length, then sums. Reproduce with standard Python 3:
-
-    python -I -B certify.py
-
-The integers at scale 10^18 for the one-orientation integral and per-edge credit are respectively 715856786297553 and 672905379119700, rounded down. To pass from the former to the latter, double it and multiply by the adjacent zero-pair density lower bound .47 (the cover's limiting correlation rho gives density 3/(2pi)). No simulation is used.
-
-An edge can be observed by at most 14 root centers (one of its endpoints must be within distance two, giving at most 2+4+8 preimages of those centers). Therefore at heavy-edge threshold eta a base graph with g good centers has sum_e D_e >= (n-g)eta/14. Uniformly approximate each heavy excess to retain .99eta and add the simultaneous good-center retiming credit qg/15. The asymptotic saving is thus at least min(q/15, 0.0000475840232377502 eta), up to the additional explicitly chosen numerical slack.
-
-The executable also checks the two-pass rational comparisons used by Section 7.6 of cutwidth.md. The probability estimates of Sections 8–9 are the same ones used in the preceding submission.
+The estimates derived for the ideal wave transfer to sufficiently accurate finite profiles up to any fixed error. Otherwise take a violating parameter/edge sequence, extract a convergent subsequence of the finite joint base-patch covariances and of s in a closed integration cell, and use convergence of the cover patch to the critical wave. The conditioning endpoint covariance stays nonsingular for s<=s_79<1. Each sign tested has positive conditional variance owing to the independent ideal cover residual (w and t each do as well in the distance-two case). Thus these finite unions of open sign cylinders have convergent probabilities, including the two-orientation count where relevant. This proves the required uniform limiting bounds without imposing any condition on exterior signs.

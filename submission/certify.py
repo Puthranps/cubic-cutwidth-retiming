@@ -142,166 +142,195 @@ def pivotal_certificate():
     return pivotal_floor
 
 
-def check_good_centers():
-    """Integer lower sum for the good-center flip at eta=.000425, |t|<=.67."""
-    from fractions import Fraction as F
+from fractions import Fraction as F
+from functools import lru_cache
+from math import factorial, isqrt
+
+UNIT = 10**18
+spatial = 200
+time_steps = 80
+def down(q):
+    return max(0, q.numerator*UNIT//q.denominator)
+def mul(a,b):
+    return a*b//UNIT
+def exp_lo(x):
+    # The seventh Taylor polynomial at x/64 is below exp(-x/64).
+    z=x/64
+    ret=down(sum((-z)**j/factorial(j) for j in range(8)))
+    for _ in range(6): ret=mul(ret,ret)
+    return ret
+@lru_cache(None)
+def central_normal(i):
+    # Lower bound on Pr(|N(0,1)| <= i/1000).
+    t=F(min(i,3300),1000)
+    integral=sum(F(-1,2)**j*t**(2*j+1)/(factorial(j)*(2*j+1))
+                 for j in range(24))
+    return down(F(7978,10000)*integral)
+def strip_at(j, s, st, divisor=1):
+    # h*j/(divisor*st*sqrt(r)), rounded downward to .001.
+    a=F(j*1000,spatial*divisor)**2*(1-s)/(st**2*s)
+    return central_normal(isqrt(a.numerator//a.denominator))
 
 
-    def good_trigger_certificate():
-        scale = 10**9
-
-        def exp_lower(x):
-            # For all boxes 0 <= x <= 23. Return a fixed-point lower bound.
-            q = 1 - x/4096
-            u = q.numerator*scale//q.denominator
-            for _ in range(12):
-                u = u*u//scale
-            return u
-
-        def rectangle(t):
-            # A lower bound on the probability that |N(0,1)| <= t/scale.
-            t = min(scale, max(0, t))
-            return (797*t*(6*scale**2-t*t))//(6000*scale**2)
-
-        wx = [exp_lower(F((670+5*(i+1))**2, 2*10**6)) for i in range(40)]
-        wy = [exp_lower(F(1035, 2000)*F((j+1)**2, 40**2)) for j in range(140)]
-        wz = [exp_lower(F(1030, 2000)*F((k+1)**2, 40**2)) for k in range(260)]
-        # Upper bounds on the conditional means, in units of 1/10000.
-        means = [(9433, -1610, 172), (8358, -2196, 368),
-                 (8358, 4730, -2810), (7148, 5055, -3920)]
-        # Defect tolerances r and lower bounds on each two-sided normal mass.
-        tolerances = [(17_050_000, 748), (23_700_000, 889), (31_850_000, 967)]
-        total = 0
-        for i in range(40):
-            x = 5_000_000*(i+1)
-            for j in range(140):
-                y = 25_000_000*j
-                for k in range(260):
-                    z = 25_000_000*k
-                    A, B, C, D = [-(p*x + q*(y+25_000_000*(q>0))
-                                    + s*(z+25_000_000*(s>0)))//10_000
-                                  for p, q, s in means]
-                    if min(A, B, C, D) <= 0:
-                        continue
-                    best = 0
-                    for r, m in tolerances:
-                        if 1000*C<=972*r or 1000*D<=2043*r:
-                            continue
-                        third = (r+2)//3
-                        half = (r+1)//2
-                        first_bound = min(A-third, (B-half)*1000//1415-third)
-                        d3 = D-(2043*r+999)//1000
-                        if first_bound<=0:
-                            continue
-                        for num in (10, 16):
-                            d1 = first_bound*num//20
-                            d2 = B-half-(1415*(d1+third)+999)//1000
-                            term = rectangle(346*d1//100)*rectangle(346*d2//100)
-                            best = max(best, term*rectangle(346*d3//100)*m**4)
-                    total += wx[i]*wy[j]*wz[k]*best
-        # Root and both tilt-coordinate densities, then the uniform cell volume.
-        return F(total, scale**6*1000**4)*F(615, 10000)*F(1, 200*40*40)
-    value = good_trigger_certificate()
-    assert value > F('0.00000002') * 15
-    return (10**15 * value).__floor__()
-
-def check_edge_credit():
-    from fractions import Fraction as F
-    from functools import lru_cache
-    from math import factorial, isqrt
-
-    UNIT=10**18
-    H=F(1,100)
-    ERROR=F(1,10000)
+def coefficients():
+    nx=(7*spatial)//10
+    nk=(9*spatial)//10
+    nl=nx+3*nk
+    # Lower coefficients follow from pi < 3.1416.
+    assert F(31416,10000)*F(27638,10000)**2 < 24
+    assert F(31416,10000)*F(13819,10000)**2 < 6
+    assert F(31416,10000)*F(7978,10000)**2 < 2
+    az=[27638*exp_lo(6*F(i+1,spatial)**2)//10000 for i in range(nx)]
+    dz=[13819*exp_lo(F(3,2)*F(i,spatial)**2)//10000 for i in range(nl)]
+    cells=[]
+    # Density is decreasing. Quantize the upper argument upwards to 1/1000
+    # for efficient shared exponential evaluation.
+    density={}
+    for i in range(nx):
+        row=[]
+        for j in range(nk):
+            dh=(200000*(j+1)+282843*(i+1))
+            den=100000*spatial
+            index=(1000*dh+den-1)//den
+            if index not in density:
+                density[index]=13819*exp_lo(F(3,2)*F(index,1000)**2)//10000
+            lower_l=(282842*j+100000*i)//100000
+            # Two exterior cell widths and the k change-of-variable factor.
+            coeff=2*mul(az[i],density[index])//(spatial**2)
+            row.append((lower_l,coeff))
+        cells.append(row)
+    return nx,nk,nl,dz,cells
 
 
-    def down(x):
-        return max(0,x.numerator*UNIT//x.denominator)
+def pivotal_integral(stds=(F(86,1000),F(208,1000),F(336,1000))):
+    nx,nk,nl,dz,cells=coefficients()
+    old=F(0); integrated=F(0)
+    for step in range(1,time_steps):
+        s=F(step,time_steps)**2
+        sx=[strip_at(i,s,stds[0]) for i in range(nx)]
+        sk=[strip_at(j,s,stds[1]) for j in range(nk)]
+        sz=[strip_at(t,s,stds[2],2) for t in range(nl)]
+        # For l bins, the z upper coordinate is q/spatial; the remaining
+        # next-generation amplitude is at least (l-q)/(2*spatial).
+        conv=[sum(dz[q]*sz[l-q] for q in range(1,l+1))//(UNIT*spatial)
+              for l in range(nl)]
+        side=0
+        for i,row in enumerate(cells):
+            row_value=sum(mul(mul(c,sk[j]),conv[l]) for j,(l,c) in enumerate(row))
+            side+=mul(sx[i],row_value)
+        integrated+=(s-old)*F(side,UNIT)**2*(1-s)**3
+        old=s
+    return integrated
 
 
-    @lru_cache(None)
-    def exp_lower(x):
-        # The odd Taylor polynomial underestimates exp(-z), including on z>=0.
-        z=x/64
-        y=down(sum((-z)**k/factorial(k) for k in range(8)))
-        for _ in range(6):
-            y=y*y//UNIT
-        return y
 
+def sqrt_lower(x):
+    return F(isqrt(x.numerator*UNIT**2//x.denominator), UNIT)
 
-    @lru_cache(None)
-    def normal_integral(x,rate):
-        # Lower bound for integral_0^x exp(-rate*t^2).
-        if x<=0:
-            return 0
-        return sum((-rate)**i*x**(2*i+1)/(factorial(i)*(2*i+1))
-                   for i in range(20))
+def strips(j,s,coef):
+    # |N(0,1)| threshold j/spatial*coef/sqrt(r).
+    r=F(s,1-s)
+    arg=(F(j*1000,spatial)*coef)**2/r
+    return central_normal(isqrt(arg.numerator//arg.denominator))
 
-
-    @lru_cache(None)
-    def half_cdf(x):
-        return down(F(11,8)*normal_integral(min(x,F(5,4)),F(3,2)))
-
-
-    def tail_upper(m,s,sd):
-        a=(m-ERROR)**2*(1-s)/(s*sd**2)
-        t=F(isqrt((a.numerator*1000**2)//a.denominator),1000)
-        return F(1,2)-F(3988,10000)*normal_integral(min(t,F(3)),F(1,2))
-
-
-    def sides(m1,m2,m3):
-        total=0
-        for ai in range(m1,65):
-            x=H*ai
-            a=11*exp_lower(6*(x+H)**2)//4
-            subtotal=0
-            for ki in range(m2,85):
-                k=H*ki
-                arg=2*(k+H)+F(2829,1000)*(x+H)
-                g=11*exp_lower(F(3,2)*arg**2)//8
-                v=half_cdf(F(2828,1000)*k+x-2*m3*H)
-                subtotal+=2*g*v//(100*UNIT)
-            total+=a*subtotal//(100*UNIT)
-        return F(total,UNIT)**2
-
-
-    # Each tuple specifies an interpolation endpoint in units of .00001,
-    # and wave score margins at depths 1,2,3 in units of .01.
-    cells=[(10,2,2,4),(25,2,4,4),(50,2,6,6),(75,4,6,6),
-           (100,4,6,8),(150,4,8,8),(200,4,8,10),(300,4,10,12),
-           (400,6,10,12),(600,6,14,16),(800,8,14,18),(1000,8,16,20),
-           (1500,8,20,24),(2000,10,20,26),(3000,12,24,32)]
-    tilted=True
-    if tilted:
-        cells=[(50,2,2,2),(100,2,2,4),(200,2,4,4),(300,2,4,4),
-            (500,2,4,6),(800,2,6,6),(1200,2,6,8),(1800,2,8,10),
-            (2500,4,8,10),(3500,4,10,12),(5000,4,10,14),(7500,4,14,18),
-            (10000,6,14,18),(14000,6,16,22),(18000,6,20,26),
-            (24000,8,22,30),(32000,10,24,34),(42000,12,30,42)]
-    last=0
+def double_path():
+    nx=(8*spatial)//10
+    # |N(0,1/33)| and |N(0,1/3)|.
+    assert F(45834,10000)**2*F(31416,10000)<66
+    assert F(13819,10000)**2*F(31416,10000)<6
+    xa=[45834*exp_lo(F(33,2)*F(i+1,spatial)**2)//10000 for i in range(nx)]
+    dp=[13819*exp_lo(F(3,2)*F(j,spatial)**2)//10000 for j in range(nx)]
     integral=F(0)
-    for end,m1,m2,m3 in cells:
-        s=F(end,100000)
-        p=sides(m1,m2,m3)-F(1,10**9)
-        stds=(86,208,336) if tilted else (501,816,1032)
-        safe=1-4*sum(tail_upper(x*H,s,F(sd,1000))
-                     for x,sd in zip((m1,m2,m3),stds))
-        if tilted:
-            safe*=(1-s)**3
-        assert p>0 and safe>0
-        integral+=(s-last)*p*safe
-        last=s
+    old=0
+    for step in range(1,time_steps):
+        s=F(step,time_steps)**2
+        # c=3-2sqrt(2) < .17158; lambda > 2.82842.
+        sx=[strips(i,s,F(282842,17158)) for i in range(nx)]
+        sd=[strips(i,s,F(100000,17158)) for i in range(nx)]
+        total=0
+        for i in range(nx):
+            conv=sum(dp[j]*sd[i-j-1] for j in range(i))//(UNIT*spatial)
+            total+=mul(mul(xa[i],sx[i]),mul(conv,conv))//spatial
+        r=s/(1-s)
+        # Variance of the one root coordinate is <3.91; contrasts at most 1.
+        determinant=sqrt_lower(1/(1+F(391,100)*r))*(1-s)
+        integral+=(s-old)*F(total,UNIT)*determinant
+        old=s
+    return integral
 
-    # The lower pair density .47 is justified by limiting rho=2sqrt(2)/3.
-    # Integrate two sign-reflected certificates. If both hold, mixed difference
-    # is -2; otherwise a single successful certificate implies at most -1.
-    heavy=2*F(47,100)*integral
-    edge_floor=down(heavy)
-    assert edge_floor == 672905379119700
-    return edge_floor
+
+def all_center_trigger():
+    S = 10**9
+
+    def exp_lower(x):
+        v = 1-x/4096
+        v = v.numerator*S//v.denominator
+        for _ in range(12):
+            v = v*v//S
+        return v
+
+    def normal_strip(v):
+        v = min(16*S//10, max(0, v))
+        poly = 1680*S**6-280*v**2*S**4+42*v**4*S**2-5*v**6
+        return 797*v*poly//(1_680_000*S**6)
+
+    wx = [exp_lower((F(11,200)+F(i+1,250))**2/2) for i in range(50)]
+    wy = [exp_lower(F(1038,2000)*F((j+1)**2,50**2)) for j in range(180)]
+    wz = [exp_lower(F(1033,2000)*F((k+1)**2,50**2)) for k in range(340)]
+    rows = [(94329,-16039,1921,315), (83603,-21780,4113,917),
+            (83603,47316,-28012,917), (71567,50606,-39010,1611),
+            (-94280,-32705,522,315), (-83332,-45350,-28012,917)]
+    rs = [(18_000_000,748), (25_040_000,889), (33_650_000,967)]
+    # Tabulate the normal strip on a 1/10000 grid. Monotonicity allows
+    # rounding its nonnegative argument down before indexing.
+    strip_table = [normal_strip(i*100_000) for i in range(16_001)]
+
+    def strip_at(value):
+        return strip_table[min(16_000, max(0, value//100_000))]
+
+    total = 0
+    for i in range(50):
+        x = 4_000_000*i
+        for j in range(180):
+            y = 20_000_000*j
+            partial = [(p*(x+4_000_000*(p>0))+q*(y+20_000_000*(q>0))+h*S,c)
+                       for p,q,c,h in rows]
+            # For fixed x,y each worst-endpoint margin numerator is
+            # affine in k. Restrict to the intersection of six positive
+            # integer-margin ranges before evaluating the rectangles.
+            lines = [(-base-c*20_000_000*(c>0), -c*20_000_000) for base,c in partial]
+            begin, end = 0, 339
+            for intercept, slope in lines:
+                if slope > 0:
+                    begin = max(begin, -((intercept-100_000)//slope))
+                elif slope < 0:
+                    end = min(end, (intercept-100_000)//(-slope))
+                elif intercept < 100_000:
+                    end = -1
+            for k in range(begin, end+1):
+                A,B,C,D,M,N = [(intercept+slope*k)//100_000 for intercept,slope in lines]
+                best = 0
+                for r,m in rs:
+                    if min(C,N)*1000<=972*r or 3*M<=r or 1000*D<=2043*r:
+                        continue
+                    third,half = (r+2)//3,(r+1)//2
+                    d1max = min(A-third,(B-half)*1000//1415-third)
+                    d3 = D-(2043*r+999)//1000
+                    if d1max<=0:
+                        continue
+                    common = strip_at(346*d3//100)*m**4
+                    for f in (5,8):
+                        d1 = d1max*f//10
+                        d2 = B-half-(1415*(d1+third)+999)//1000
+                        prod = common*strip_at(346*d1//100)*strip_at(346*d2//100)
+                        best = max(best,prod)
+                total += wx[i]*wy[j]*wz[k]*best
+    return F(total,S**6*1000**4)*F(621,10_000)*F(1,250*50*50)
+
+
 
 def main():
- t=time.monotonic();N=int(sys.argv[1]) if len(sys.argv)>1 else 93;J=int(sys.argv[2]) if len(sys.argv)>2 else 47;L=3
+ t=time.monotonic();N=int(sys.argv[1]) if len(sys.argv)>1 else 75;J=int(sys.argv[2]) if len(sys.argv)>2 else 27;L=3
  assert N>=1 and J>=3 and J%2==1
  pi=pi_interval();r2=I(2).sqrt();c2=3/(2*pi);c1=(6/pi).sqrt()
  xs,ws=nodes_weights(N,L)
@@ -410,22 +439,33 @@ def main():
     row.append((lower_sum*cl//SCALE2,(upper_sum*cu+SCALE2-1)//SCALE2))
    nxt.append(row)
   state=nxt
- lower_target = D('0.1306475664231676642')
- upper_target = D('0.130647566423167665')
+ lower_target = D('0.130647566419')
+ upper_target = D('0.130647566425')
  pivotal_floor = pivotal_certificate()
- good_floor = check_good_centers()
- edge_floor = check_edge_credit()
- from fractions import Fraction as F
- q = F(good_floor, 10**15)
- K = F(edge_floor, 10**18)
- assert F(4,5)**7 > F(1,5)
- assert min(q/5, F(99,100)*F(17,40000)*K/6) > F(47,10**9)
+ q = all_center_trigger()
+ first = F(954,1000)*pivotal_integral()
+ assert F(2878,10000)**2*11*F(31416,10000)**2 < 9
+ second = F(2878,10000)*double_path()
+ K = first + F(565684,100000)*second
+ assert int(q*10**15)==224201878 and int(6*q*10**15)==1345211272
+ assert down(first)==3607233186504135 and down(second)==2211584760808344
+ assert K >= F('0.016')
+ delta = F('0.00000125')
+ assert min(6*q,K*F(19,40000)/6)>delta
+ outer = 3*F('.39')*F('.056')*F('1.1')*F('.0179')*F('.055')**2/2
+ assert outer > delta
+ structural_gamma = F(upper_target)-delta
+ circuit_limit = 1+1/(2*structural_gamma)
+ assert F((circuit_limit*10**32).__floor__(),10**32) == F('96542533104947432504697194718477/20000000000000000000000000000000') < circuit_limit
  passed = previous_even > lower_target and gamma.b < upper_target
  print(json.dumps({
   'certified': passed, 'N': N, 'J': J, 'L': L, 'precision': P, 'fixed_point_bits': FP,
   'gamma_odd_lower': str(gamma.a), 'gamma_odd_upper': str(gamma.b),
   'gamma_even_lower': str(previous_even), 'target_series_upper': str(upper_target),
-  'structural_saving_proved_in_manuscript': '0.000000047', 'good_floor_scaled_1e15': good_floor, 'integrated_edge_floor_scaled_1e18': edge_floor, 'pivotal_floor_scaled_1e12': pivotal_floor,
+  'structural_saving_proved_in_manuscript':'0.00000125', 'pivotal_floor_scaled_1e12':pivotal_floor,
+  'one_orientation_floor_scaled_1e15':int(q*10**15), 'six_orientation_floor_scaled_1e15':int(6*q*10**15),
+  'adjacent_credit_floor_scaled_1e18':down(first), 'distance_two_credit_floor_scaled_1e18':down(second),
+  'combined_credit_floor_scaled_1e18':down(K), 'outer_floor_scaled_1e15':int(outer*10**15),
   'intervals': results
  }))
  return 0 if passed else 1

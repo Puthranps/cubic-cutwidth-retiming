@@ -6,15 +6,15 @@ A cubic multigraph has degree three at every vertex, counting a loop twice. For 
 
 **Theorem 1.** There exists a single nonnegative nondecreasing function h with h(n)/n tending to zero such that every cubic multigraph H on n vertices satisfies
 
-    cw(H) <= gamma n + h(n),    gamma = 0.130647519423167665.
+    cw(H) <= gamma n + h(n),    gamma = 0.130646316425.
 
 Let w_d=(1+d/3)2^(-d/2). For the centered unit-variance Gaussian wave on the cubic tree with covariance w_d at distance d, let p_j be the probability that consecutive vertices alternate signs along a fixed j-edge path. Define the finite sums
 
     Gamma_J = sum_(j=1)^J (-1)^(j+1) 3*2^(j-2) p_j.
 
-Gamma is the limit of the alternating sums and the infimum of their odd truncations, as proved in certificate.md. The strengthened comparison proves that the worst-case asymptotic cubic cutwidth per vertex is at most Gamma minus 0.000000047. The displayed rational uses Gamma <= Gamma_47 < 0.130647566423167665. The finite computations check the series enclosure and the two independent parts of the layout improvement.
+Gamma is the limit of the alternating sums and the infimum of their odd truncations, as proved in certificate.md. The strengthened comparison proves that the worst-case asymptotic cubic cutwidth per vertex is at most Gamma minus 0.00000125. The displayed rational uses Gamma <= Gamma_27 < 0.130647566425. The finite computations check the series enclosure and the two independent parts of the layout improvement.
 
-Sections 1–6 give galarnon42's matching-cover layout and finite-profile comparison, building on Arthur Ostapenko and McGuire, Schlesinger and Williams. Section 7 supplies the earlier retiming lemma and the elementary pivotal configuration from our first submission 4c133ffa-7452-42c6-9629-d7821ee890d4. Section 7.5 applies the quantitative proofs in certificate.md Sections 8 and 9. Section 7.6 gives the new two-pass ordering and the nine-edge count. Sections 8–10 transfer the result to arbitrary cubic multigraphs with a uniform remainder. Matching-cut submodularity is also treated by Jeong, Sæther and Telle, arXiv:1507.02384.
+Sections 1–6 give the matching-cover layout and comparison due to galarnon42, building on Ostapenko and McGuire, Schlesinger and Williams. Section 7 supplies a local matching move and the adjacent private-leaf witness. Section 7.5 gives the new ordering, the nine-edge count and the strict decrease away from threshold zero. Section 8 of certificate.md proves an additional gain from pairs at distance two and combines it with an integrated bound on adjacent pairs. Sections 8–10 below transfer the conclusion to arbitrary cubic multigraphs with a uniform sublinear remainder. Matching-cut submodularity is also studied by Jeong, Sæther and Telle, arXiv:1507.02384.
 
 ## 1. Symmetric submodular Gaussian comparison
 
@@ -538,13 +538,9 @@ Distinct keys turn all vertex prefixes of their increasing order into
 threshold vectors; Lemma 3.2 then supplies an actual vertex ordering
 with cutwidth at most the right side of (18) plus six.
 
-## 7. A uniform improvement of 10^(-14) by retiming vertex keys
+## 7. Retiming a Gaussian vertex ordering
 
-For every fixed odd J for which the path bound of Sections 5–6 is used, the asymptotic cutwidth coefficient is at most
-
-    Gamma_J - 10^(-14).                                             (S7)
-
-The same saving therefore holds below the infimum of the odd bounds. The size thresholds and Gaussian profiles may depend on J. This section proves (S7) for connected simple cubic graphs, after which the kernel and bridge reductions apply as before. Write F(B) for the crossing-cover number of a vertex set B. By bipartite matching-cover equality, it is also the maximum size of a matching in the crossing graph. Changing one vertex changes F by at most one.
+For each fixed odd J the limiting upper bound for connected simple cubic graphs improves from Gamma_J to Gamma_J minus 0.00000125. The graph-size threshold may depend on J. Write F(B) for the maximum matching size of the crossing graph of the prefix B.
 
 ### 7.1 A local change in a vertex ordering
 
@@ -553,15 +549,6 @@ At a center o name the neighbors a,b,u. Let a1,a2 be the two neighbors of a beyo
     T(o)={a,b,a1,a2,w,w1,w2}.
 
 If o is outside B and T(o) is contained in B, then F(B+o)=F(B)-1. To prove this, delete o from the crossing graph, obtaining K. The vertex a is isolated there, so the old edge oa augments a maximum matching of K. After changing the bit at o, the only possible crossing edge at o is ou. If this edge crosses, u is outside B and w has just one crossing neighbor, u. Any matching using ou can replace that edge by uw, obtaining a matching of K of the same size. This proves the decrease. Complementing all the bits gives the corresponding decrease when o is inside B and T(o) is outside. The proof uses the specified full neighbor lists at o,a,w; extra edges between boundary vertices at distance three are allowed.
-
-Given any set of eligible centers, select a subset S in which no selected center lies in another's trigger set. If there are g eligible centers, the conflict graph has at most 7g edges. Give its vertices independent continuous priorities and keep every vertex of lowest priority in its closed neighborhood. The expected size is sum 1/(1+degree), at least g/15 by Cauchy-Schwarz. Fix any such independent set of size at least g/15.
-
-Let Z be the original real vertex keys and order by increasing key. At v in S replace the key by
-
-    min(Z_v,max_{x in T(v)} Z_x)  when Z_v>=0,
-    max(Z_v,min_{x in T(v)} Z_x)  when Z_v<0.                     (21)
-
-Other keys keep their original values. At a threshold t, take B={v:Z_v<t}. Each vertex whose bit changes under (21) saves exactly one unit of F, by the preceding matching argument or its complement. The changes can be performed in any order since no changed vertex is in another's trigger set. Thus the new value equals the old value minus the number of changed vertices. Each new key is one of the original keys in its radius-three ball. The original keys are almost surely distinct owing to the small independent noise. At most 22 new keys can equal one original key, by the cubic ball-size bound. Resolving ties arbitrarily therefore adds at most 22 to the largest threshold F. The layout conversion in Lemma 3.2 adds at most six.
 
 ### 7.2 A finite-radius Gaussian construction and its comparison
 
@@ -573,64 +560,15 @@ Thus r_d(alpha) tends to w_d=(1+d/3)2^(-d/2) as alpha increases to 1/sqrt(2). Wr
 
     D_xy=<b_x,b_y>-<f_x,f_y>.
 
-It is nonnegative by Cauchy-Schwarz on each fiber and is the same for all lifts of a given base edge. Define eta=10^(-4). Call a center good if all edges in its lifted radius-three tree ball have excess at most eta.
+It is nonnegative by Cauchy-Schwarz on each fiber and is the same for all lifts of a given base edge. Section 7.5 applies its cutoff to the nine edges of each named patch.
 
 Use the infinite alpha-profile only to define these excesses and estimate covariances. On the actual graph truncate the profile at radius R, normalize it, push it to the base, and add independent tie noise as in (8). For fixed alpha the omitted squared mass is a geometric tail tending to zero uniformly in the root, and pushforward contracts row distance by the reverse triangle inequality on each fiber. Consequently these finite rows and their covariances approach the full profiles uniformly over all graphs and all individual pairs. On a finite cover of sufficiently large girth the local truncated profiles have exactly the corresponding tree covariances. The comparison, exact lifting and concentration arguments of Sections 4–6 apply to these finite rows unchanged. For each fixed J the alternating-path expectation of the high-girth cover at zero has upper bound Gamma_J+e, with e arbitrarily small: first take alpha close to its critical value, then choose R large and the positive tie noise small. This follows from convergence of the finitely many path and three-neighbor probabilities used in (10), including vanishing of the degree-three error. These choices can meet simultaneously all the fixed-patch accuracy conditions below, before the graph size is chosen.
 
-For a good center o we need a more precise local Gaussian coupling. Let u_x(p) be the unit direction of f_x on fiber p, and let U_x map the pth coordinate vector to u_x(p) supported on that fiber. This is an isometry and U_x b_x=f_x. Then
-
-    2 D_xy=sum_p b_x(p)b_y(p)||u_x(p)-u_y(p)||^2.
-
-Adjacent positive alpha-profile entries have ratios in [alpha,1/alpha], so their fiber norms do as well. For a tree path o=x_0,...,x_k=x, k<=3, one has
-
-    b_x(p)^2 <= alpha^(-(2(k-i)+1)) b_{x_(i-1)}(p)b_{x_i}(p).
-
-Telescope the differences of the isometries along the path, applying each to b_x. Their norm bounds from the last two displays give
-
-    ||f_x-U_o b_x|| <= sqrt(2 eta) sum_{j=0}^{k-1} alpha^(-(2j+1)/2).
-
-The right side is zero at k=0 and respectively less than .01691,.04107,.07556 at k=1,2,3 (use alpha>=0.7). All lifted vertices of this ball have distinct base projections: otherwise their ideal rows would be within 2(.07556) in norm, whereas distinct rows at distances 1 to 6 have limiting norm distance at least sqrt(2-2w_1)>.33. The trigger in Section 7.1 is therefore available at each good center.
-
-Using the same Gaussian white noise on the rows f_x and U_o b_x couples the ideal alpha-values and full base values, with difference standard deviations bounded by the last display. At a fixed finite patch the ideal alpha Gaussian vector also couples to the critical one with arbitrarily small difference standard deviations by continuity of the positive matrix square root. Truncation and tie noise give another arbitrarily small rowwise error. These Gaussian couplings can be joined over their common Gaussian vector by sampling conditionally independent residuals, and standard deviations of successive differences add as upper bounds. Thus for the actual base keys versus the critical wave we may take standard-deviation bounds
-
-    .0001, .017, .0412, .0757 at respective distances 0,1,2,3.      (22)
-
-The coupling is needed separately for each center to bound expectations.
-
-### 7.3 A quantified change at good centers
-
-For every 0<=t<=1.25, the critical wave has an event of probability at least 4.06725 times 10^(-13) on which its root lies above t by more than .004 and all seven trigger keys lie below t by more than .15 at distance one, .33 at distance two and .64 at distance three. To verify this set lambda=2 sqrt(2), rho=lambda/3. Target the following values:
-
-    o=t+.02, a=t-.33, b=t-.20, u=lambda o-a-b, w=t-.45,
-    a1=a2=(lambda a-o)/2,   w1=w2=(lambda w-u)/2.
+### 7.3 Sibling contrasts on the critical tree
 
 The Gaussian root O is standard normal. With independent standard G1,G2 its three neighbors are rho O plus (G1, -G1/2+sqrt(3)G2/2, -G1/2-sqrt(3)G2/2)/3. A subsequent sibling pair with parent C and grandparent P is (lambda C-P)/2 plus and minus G/(2sqrt(3)), with a fresh independent standard G. These formulas follow from the wave equation: sibling differences have variance 2(1-w_2)=1/3 and zero covariance with earlier variables outside their two descendant branches, by equal tree distances. In exposing the tree a level at a time all these new contrasts are independent.
 
-Center the six independent normals O,G1,G2,G_a,G_u,G_w at
-
-    o, 3(a-rho o), (2/sqrt(3))[3(b-rho o)+(3/2)(a-rho o)], 0,
-    2sqrt(3)[w-(lambda u-o)/2], 0.
-
-Use interval half-widths .015,.06,.06,.30,.12,.40, respectively. The absolute centers of the first, second, third and fifth intervals are at most 1.27,1.047,1.363,4.398; the last three bounds follow from their affine expressions on [0,1.25]. The induced errors in a,b,u are below .0342,.0415,.0415, in an a-child below .1424, in w below .1008 and in a w-child below .2788. The target a-child is (.91421356...)t-.47669047..., and the target w-child equals t-.92968037.... These bounds give all claimed margins. Each normal interval has mass at least its length times its least density. The six masses exceed .005,.025,.017,.22,.000003,.29, respectively, whose product is 4.06725 times 10^(-13).
-
-From (22) and the Gaussian tail bound, the probability of failure under coupling is at most
-
-    2 exp(-.004^2/(2·.0001^2)) + 4 exp(-.15^2/(2·.017^2))
-        + 6 exp(-.33^2/(2·.0412^2)) + 4 exp(-.64^2/(2·.0757^2))
-      < 7.2 times 10^(-14).
-
-Hence every selected good center changes under (21) with probability greater than 3.34 times 10^(-13) on this threshold range. Indeed the actual root is above t>=0 and all trigger keys are below t. Reflection gives the same guarantee on [-1.25,0] for the branch that increases the center's key.
-
-If at least half the n base vertices are good, the independent selection has size at least n/30. At each threshold |t|<=1.25 the expected saving is therefore more than 1.11 times 10^(-14)n. For mesh thresholds the number of changed centers has variance O_R(n), since its indicators depend only on Gaussian inputs within a fixed radius. Between mesh points the changed-center count varies by at most 22 times the number of original keys in that window, since only centers within distance three can depend on a crossing key. The Section 6 finite-grid and concentration argument therefore proves one realization with throughout the central interval a loss arbitrarily close to this expected saving from the original upper bound. In the tails the new F is at most the original F, hence at most the corresponding vertex tail count. The standard normal tail at 1.25 is below .11 (integrate the lower polynomial 1-z+z^2/2-z^3/6 for exp(-z) with z=x^2/2 from 0 to 1.25, including the Gaussian normalizing factor). Every odd Gamma_J exceeds .113: a matching of size at least N_1-N_2 exists by removing one edge of each overlapping edge pair as needed. On the high-girth covers this lower bound on F and the incumbent upper bound give, after taking profile limits,
-
-    Gamma_J >= (3/2)p_1-3p_2
-             = (3/(2pi))[arccos(5/6)-arccos(2sqrt(2)/3)] > .113.
-
-Here 2p_1=2p_2+Pr(the two outer path signs differ). Alternating cosine Taylor bounds give the first arccos above .580 and the second below .341. Choose all profile, mesh and concentration allowances to total less than 5 times 10^(-16)n, and finally absorb the constant tie and layout overhead. This proves (S7) for the good-center case.
-
-### 7.4 A strictly decreasing covariance comparison at an edge
-
-If fewer than half the vertices are good, at least n/88 distinct base edges have D_e>eta; each observed edge can be charged to at most 44 centers, by the radius-three ball bound at its two ends. Choose the finite profiles so on each such edge their base-field covariance exceeds its high-girth-cover value by at least .99 eta. This is possible by the uniform row approximations in Section 7.2.
+### 7.4 Covariance interpolation and the adjacent matching witness
 
 Let X denote the high-girth-cover field and Y an independent copy of the base field repeated in the covering fibers. Write A,C for their covariances. Hellinger comparison gives C>=A entrywise, and both diagonals equal one. For Z=sqrt(1-s)X+sqrt(s)Y, differentiating the zero-threshold expectation of F on the cover gives a sum over unordered pairs i,j with terms
 
@@ -659,51 +597,80 @@ For ai=4,...,59 and ki=4,...,79 sum, with x=ai h and k=ki h, the terms
 
 The floor of 10^12 times the square of the sum is 18079200775. The exact-arithmetic checker for the pivotal probability reproduces this finite sum. The expressions A,D bound the respective densities below on the ranges used because exp(-z)>=(1-z/64)^64 for 0<=z<=64, and pi<22/7 bounds both normalizing factors. Integrating the odd Taylor lower polynomial of exp(-3z^2/2) yields H as a lower bound for the distribution, using monotonicity for the cap. Taking the upper box endpoints for decreasing densities and the lower ones for the increasing distribution, with 2.828<lambda<2.829, therefore gives the stated lower bound.
 
-For sufficiently accurate finite parameters, the cover law conditional on X_i=X_j=0 has the same pivotal event with margins .039 and probability at least .0179. Conditional Gaussian convergence holds because the two-by-two endpoint block is invertible, and the ideal .04-margin event lies strictly inside the finite target inequalities. For 0<=s<=5.5 times 10^(-6) this event holds for Z given Z_i=Z_j=0 with probability at least .0165 after removing the margin condition. To see this, write X_v=L_v X_P+E_v for each of at most 28 outside-patch values, with P=(i,j). In the ideal wave the regression rows on one side at depths 1,2,3 are (sqrt(2),-1/2), (3/2,-1/sqrt(2)), (sqrt(2),-3/4), by the conditional child means; on the other side interchange the coordinates. For accurate finite profiles each corresponding row has l1 norm less than 2.5. The residual vector E is independent of X_P,Y. Conditionally on Z_P=0,
+For sufficiently accurate finite parameters, the same ideal private-edge event with margins .04 has a finite zero-conditional counterpart with margins .039 and probability greater than .0179. The endpoint covariance is nonsingular and the finite patch conditional covariances converge to the critical ones. Strict finite-dimensional sign cylinders with margins .039 contain the ideal events with margins .04 in the limit. By the critical child recursion, the exterior regression rows on the endpoint pair on one side have depth (1,2,3) values (sqrt(2),−1/2), (3/2,−1/sqrt(2)), (sqrt(2),−3/4) respectively. Interchanging the endpoints gives the other side. Thus their finite-profile l1 norms are less than 2.5. The two sign-reflected versions of the matching event can both count when estimating a mixed difference. In that case all four private parents have a separate private leaf and can use their private edges simultaneously. After those matches, the two central vertices contribute exactly the crossing indicator of their common edge, whose mixed difference is −2.
 
-    Z_v=sqrt(1-s) E_v + sqrt(s)(Y_v-L_v Y_P).
+### 7.5 All-center advancement, nine-edge charging and strict threshold decrease
 
-The centered perturbation before multiplying by sqrt(s) has conditional variance at most its unconditional variance, at most (1+2.5)^2. The probability any perturbation exceeds .038 in absolute value is at most
+Set $\eta=19/40000=.000475$ and $T=11/200=.055$. Write $F(B)$ for the maximum matching size of the crossing graph. At a root $o$ name its neighbors $a,b,u$, the two outward children of $a$ as $a_1,a_2$, the children of $u$ as $w,w'$, and the children of $w$ as $w_1,w_2$. There are twelve namings counting the choices of $u,w,a$; the orders within each pair of interchangeable grandchildren have no effect. A patch is light when its nine tree edges have Hellinger excess at most $\eta$.
 
-    56 exp[-.038^2/(2·3.5^2·5.5·10^(-6))] < .00125.
+#### Advancement and charging
 
-As .039 sqrt(1-s)>.038, the stated pivotal probability follows. The adjacent zero-pair density is at least 1/(2pi), so integration of these terms from 0 to 5.5 times 10^(-6) yields a per-vertex saving of at least
+Use all light namings at every root. For each naming $p$ let $S_p=\{a,b,a_1,a_2,w,w_1,w_2\}$. Replace the original key by $Z'_o=\min(Z_o,\min_p\max_{v\in S_p}Z_v)$, omitting the inner minimum when there is no light naming. At any threshold $t$ the change only adds vertices to $B=\{v:Z_v<t\}$. Every added vertex has a witnessing naming with all of $S_p$ originally in $B$. None of the other added vertices can lie in that chosen set. Thus the changes can be applied in any order and each saves one unit of $F$. Indeed delete $o$ from the crossing graph to get $K$. Originally $a$ is isolated in $K$, so edge $oa$ augments a maximum matching of $K$. Afterwards the only possible crossing edge at $o$ is $ou$. When it crosses, $w$ has just one crossing neighbor $u$ and a matching using $ou$ can replace it by $uw$. This proves the saving even in the presence of unspecified edges away from the three stated neighbor lists. A new key equals one of the original keys in its radius-three ball, so the multiplicity bound 22 and the fixed-radius concentration and mesh arguments still apply.
 
-    (1/88)(.99·10^(-4))(5.5·10^(-6))(.0165/(2pi)) > 1.6 times 10^(-14).
+For a light naming require in addition $Z_u,Z_{w'}>t$. A successful event then determines $u$ uniquely among the three neighbors of $o$ and $w$ uniquely among the two children of $u$. At any root the sum of the successful light indicators over all twelve namings, weighted $1/2$ each, is therefore at most the indicator that the root changes. The two possible choices of $a$ for fixed $u,w$ are allowed to overlap. If $h$ base edges have excess greater than $\eta$, the total weighted number of light namings is at least $6n-36h$. For any one of the nine tree-edge positions all oriented base edges are hit equally often over the rooted namings: fixing a directed image of that edge, extend both ends through the remaining finite tree by local choices among two remaining neighbors. The number of completions depends only on the named tree. Collisions away from individual neighbor lists are allowed in this count of projections of lifted namings. Thus each edge appears with weighted multiplicity $6n/(3n/2)=4$ at each position. The union bound gives $36h$.
 
-All other pairs and the rest of the interpolation have nonpositive contributions. Exact lifting divides the cover expectation by its degree, and Lemma 1.1(b) gives the same upper bound at every threshold on the base. Select the finite-profile errors and the original concentration and layout errors below the slack between this saving and 10^(-14). This proves (S7) also for the bad-center case.
+The next calculation yields per-naming probability $q>2.24201878\,10^{-7}$ for every $|t|\le T$. Suppose the unretimed comparison at zero has credit $K\sum_e D_e-o(n)$ with $K\ge .016$ and $D_e$ the adjacent raw excess. The credit also bounds the original expectation at every threshold by symmetric submodularity. Adding advancement gives a central saving of at least
 
-### 7.5 Combining the two quantitative improvements
+\[
+ K\eta h+q\max(0,6n-36h)-o(n)\ \ge\ n\min(6q,K\eta/6)-o(n)>1.26\,10^{-6}n-o(n).
+\]
 
-Use the excess D_e of Section 7.2 with the new fixed cutoff eta=0.000425. A good center has every edge of its lifted radius-three ball below or equal to this cutoff. Let g be their number on an n-vertex connected simple cubic graph. Take finite profiles as close to critical as required in both companion proofs. The number of retained good centers is at least g/15 by Section 7.1. For every |t|<=.67 the good-center calculation in certificate.md Section 8 gives a uniform trigger probability q with q/15>0.00000002. Section 7.1 shows that each trigger saves one unit of the crossing-cover number, with no double counting.
+Section 8 of certificate.md proves the stated coefficient $K$ for the sum of all adjacent excesses, including the finite-profile allowance. Below we give an explicit outer-threshold saving $>1.9\,10^{-6}n$. Together these allow a uniform asymptotic cutwidth saving of $1.25\,10^{-6}$, including strictly positive slack for all approximations.
 
-For a center that is not good, some edge in its ball has D_e>eta. One endpoint of that edge is within distance two of the center. A given edge can therefore be observed by at most 2+4+8=14 centers. There are at least (n-g)/14 such distinct heavy edges. The finite-profile covariance surplus on each is at least .99 eta. The integrated two-orientation witness estimate of certificate.md Section 9 gives per unit of surplus at least K=0.000672905379119700, up to arbitrarily small finite-profile losses. All other derivative terms have nonpositive sign. After exact division by the cover degree, this saves at least .99 K eta (n-g)/14 from the unretimed expectation. Lemma 1.1(b) transfers this zero-threshold upper bound to every threshold. The good-center retiming then saves the additional qg/15 at each central threshold. In particular
+#### Light-naming probability
 
-    .99 K eta /14 > 0.00000002,      q/15 > 0.00000002.
+Let $w_d=(1+d/3)2^{-d/2}$ and $k_d=d^2(\sqrt2)^{d-1}$ with $k_0=0$. Within a light naming, the finite field covariances for tree distance $d$ lie in $[w_d-o(1),w_d+k_d\eta+o(1)]$. Only paths among the nine named edges enter the calculation. In the normalized complete $\alpha$-profiles, $2D_{xy}=\sum_p b_x(p)b_y(p)\|e_x(p)-e_y(p)\|^2$ with $b_x$ the pushed row and $e_x$ its fiber unit directions. Telescope those directions along the path and use $b_xb_y/(b_{i-1}b_i)\le\alpha^{-(d-1)}$ at each step. This gives the coefficient $d^2\alpha^{-(d-1)}$ before $\alpha\uparrow1/\sqrt2$. Truncation and tie noise are uniform rowwise approximations afterwards. Distinct named vertices have distinct base projections, since $w_d+k_d\eta<1$ for $1\le d\le5$.
 
-For completeness the outer thresholds already have slack. For adjacent centered normal scores of correlation r, the probability of opposite threshold bits is
+Put $\lambda=2\sqrt2$. At each of $o,a,u,w$ the defect $D_v^*=\sum_{z\sim v}Z_z-\lambda Z_v$ has standard deviation at most $\sqrt{3(3-\lambda)\eta}+o(1)$. For completeness, the fiber defect row $L_v=\sum b_z-(\alpha^{-1}+2\alpha)b_v$ is coordinatewise nonnegative after adding $q_\alpha\mathbf1_{\pi(v)}$, where $q_\alpha=(\alpha^{-1}-\alpha) f_v(v)=o(1)$. This is the fiber triangle inequality and the radial tree identity off $v$. The sum of squares of the three tree neighbor entries is at most $(\alpha^{-2}+2\alpha^2)f_v^2$ pointwise. Thus $L_v\le[\sqrt{3(\alpha^{-2}+2\alpha^2)}-(\alpha^{-1}+2\alpha)]b_v$. Finally $\langle b_v,L_v\rangle\le3\eta+o(1)$ by the adjacent excesses. Multiply the upper bound for the corrected nonnegative row by that row and sum to obtain the variance estimate.
 
-    p(t,r) = (1/pi) integral from r to 1 of exp(-t^2/(1+s))/sqrt(1-s^2) ds
-           <= exp(-t^2/2) arccos(r)/pi.
+Condition on $O=Z_o=t+x$ and on $R=2 Z_u-Z_a-Z_b$, $Q=\sqrt3(Z_{w'}-Z_w)$. After removing their regressions on $O$, write $(R',Q')^T=K_2(y,z)^T$ with $K_2$ their two-dimensional covariance. Use $x,y,z>0$. Their joint density with respect to these three variables is
 
-Indeed differentiate the bivariate normal lower-quadrant probability at (t,t) with respect to r. The density satisfies partial_r f=partial_x partial_y f, and the integrated derivative equals f(t,t). At r=1 the two threshold bits coincide. This yields the formula by summing the two crossing orientations. Count every crossing edge as an upper bound on the matching size. Hellinger comparison gives adjacent correlation at least the truncated tree value, arbitrarily close to 2sqrt(2)/3. Since arccos(2sqrt(2)/3)<.34, pi>3.14, and exp(-.67^2/2)<1-.67^2/2+(.67^2/2)^2/2, the limiting upper bound (3/2)p(.67,2sqrt(2)/3) is less than .1302. The cosine estimate follows from the Taylor upper bound cos(.34)<=1-.34^2/2+.34^4/24<2sqrt(2)/3. Every odd Gamma_J is at least Gamma >= Gamma_46 > .1306 by certificate.md. Thus the outer thresholds satisfy the same claimed saving. Retiming never increases their crossing-cover number.
+\[
+ (2\pi)^{-3/2}\sqrt{\det K_2}\exp[-((t+x)^2+(y,z)K_2(y,z)^T)/2].
+\]
 
-All inequalities used for the reported saving have positive slack. Choose alpha near critical, then a finite truncation radius and positive tie noise, to meet their finitely many accuracy conditions simultaneously. At any fixed threshold the retimed value is the original F minus a sum of finite-range trigger indicators. Their variances are O_R(n), as in Section 7.3. On central mesh intervals use the at-most-22 local multiplicity bound there. On the bounded outer intervals use the original mesh bounds of Section 6. Beyond a sufficiently large fixed tail cutoff use the vertex tail counts. With concentration and a sufficiently fine fixed mesh these losses are arbitrarily small per vertex. Resolving the ties and converting the matching cover to a graph ordering add at most 22+6. For each fixed odd J this proves the asymptotic graph bound Gamma_J minus 0.00000002.
+For the first four rows below take the conditional mean of $Z_v-t$, and for the last two the mean of $t-Z_v$. Each is bounded above by $(p x+q y+c z+h)/10^5$.
 
-### 7.6 Two passes on nine-edge patches
+| $v$ | $p$ | $q$ | $c$ | $h$ |
+|---|---:|---:|---:|---:|
+| $a,b$ | 94329 | −16039 | 1921 | 315 |
+| $a_1,a_2$ | 83603 | −21780 | 4113 | 917 |
+| $w$ | 83603 | 47316 | −28012 | 917 |
+| $w_1,w_2$ | 71567 | 50606 | −39010 | 1611 |
+| $u$ | −94280 | −32705 | 522 | 315 |
+| $w'$ | −83332 | −45350 | −28012 | 917 |
 
-Use the named neighbors and Hellinger excess of Sections 7.1–7.2 of this manuscript. Let η = 17/40000, and call an edge heavy when its excess exceeds η. A named tree patch comprises the four complete stars at o, a, u, w. Their union has nine tree edges. Every covariance comparison in Section 8 of the certificate uses a path inside this union, and every defect estimate there uses one of the four complete stars. Its bounds also show distinct projections for the named vertices when those nine edges are light: for distinct named tree vertices at distance d ≤ 6, the limiting correlation is bounded above by w_d + d²(√2)^(d−1)η < 1. Thus one light named patch suffices at a center. Its favorable one-orientation trigger probability exceeds q = 361900864/10^15, up to arbitrarily small uniform finite-profile error.
+To reproduce the table let $s$ be $+1$ in the first four rows and $-1$ in the last two. The coefficients before numerical enclosure are $s c_{vo}$, $s[\operatorname{Cov}(Z_v,R)-c_{vo}\operatorname{Cov}(O,R)]$ and $s[\operatorname{Cov}(Z_v,Q)-c_{vo}\operatorname{Cov}(O,Q)]$. The constant is bounded by $(1-w_d)T+o(1)$. In the ideal wave the unsigned triplets are $(w_1,-1/6,0),(w_2,-\lambda/12,0),(w_2,\lambda/6,-1/(2\sqrt3)),(w_3,1/2,-\lambda/(4\sqrt3)),(w_1,1/3,0),(w_2,\lambda/6,1/(2\sqrt3))$. Add $\eta$ times the sum of the positive signed products of coefficients times $k_d$ for each covariance. The resulting upper error multipliers for signed raw $R,Q$ covariances are $(2k_2,\sqrt3 k_3),(2k_3,\sqrt3 k_4),(2k_1,\sqrt3 k_2),(2k_2,\sqrt3 k_3),(2k_2,\sqrt3 k_1),(2k_3,\sqrt3 k_2)$. The regression subtractions cost at most $(w_d+k_d\eta)\eta$ times $2$ and $\sqrt3k_2$ respectively. All rounded table bounds have strict slack.
 
-Let h be the number of heavy edges and g the number of vertices admitting at least one light named patch. Choose a root uniformly, a uniform ordering of its three incident edges, and a uniform choice for the child w of u. The projection of any of the nine tree edges is uniform on base edges. Indeed each root-to-edge route is a stationary nonbacktracking walk started with a uniform directed edge, whose continuation chooses either permitted edge uniformly. This marginal argument also applies to unlabeled sibling pairs ordered by a fair coin. There are 3n/2 base edges. The union bound gives n−g ≤ 6h even if some projected edges coincide. At each eligible center fix one light patch.
+The errors in $\operatorname{Var}R,\operatorname{Var}Q,\operatorname{Cov}(R,Q)$ from their ideal values $1,1,0$ have multiplier intervals $[-8k_2,2k_2],[-6k_2,0],[-\sqrt3(2+2k_3),\sqrt3(2+2k_3)]$. After subtracting the regressions these give $(2\pi)^{-3/2}\sqrt{\det K_2}>.0621$ and $(y,z)K_2(y,z)^T\le1.038 y^2+1.033 z^2$ for sufficiently accurate finite profiles (use $2yz\le y^2+z^2$).
 
-Let T(v) be its seven trigger vertices. Mark each eligible center with independent probability 1/5, independently of its Gaussian scores. In the first pass replace a marked center's score by the minimum of its score and the maximum score in T(v), reading all scores before the pass. In the second pass replace every eligible center's score by the maximum of its first-pass score and the minimum first-pass score in T(v), reading all scores after the first pass. At any threshold every change in the first pass adds an outside center whose entire trigger was already inside. All additions can be made successively and each saves one matching edge by Section 7.1. Removing inside centers in the second pass has the complementary property. Both passes can only decrease the crossing matching size at every threshold.
+Subtract conditional means. Take $r$ as a tolerance on all four defect fluctuations. Bound the three centered half-differences of $a,b$, of $a_1,a_2$ and of $w_1,w_2$ in magnitude by $d_1,d_2,d_3$. Each half-difference has conditional standard deviation $\le1/\sqrt{12}+o(1)<1/3.46$, by its distance-two covariance bound. Because $O,R,Q$ have zero residual, the respective absolute fluctuations in the six rows are bounded by
 
-For 0 ≤ t ≤ .67 the favorable original event therefore saves one unit when the center is marked, with probability at least q/5. For −.67 ≤ t ≤ 0 reflect the original Gaussian field. A center in the favorable removal event survives to the second pass whenever none of the at most seven eligible vertices in T(v) was marked. Its conditional probability is at least (4/5)^7 > 1/5. Each successful removal counts once. This yields qg/5 in expected savings on the entire central interval, up to arbitrarily small finite-profile losses. In either tail use the already stronger outer-threshold bound in Section 7.5.
+\[
+ r/3+d_1,\quad 1.415(r/3+d_1)+r/2+d_2,\quad .972r,\quad 2.043r+d_3,\quad r/3,\quad .972r.
+\]
 
-Independently, the preceding covariance comparison saves at least .99 Kηh at all thresholds before the two passes, where K = 672905379119700/10^18. Combining these on the same graph gives a saving per vertex at least min(q/5,.99 Kη/6), which exceeds 0.000000047. Both strict inequalities are rational. Each final score is an original score within radius six, obtained using only local scores and marks. At most 190 vertices can inherit any given score. At a fixed threshold the crossing matching size is 1-Lipschitz in each final bit. A change in any one independent input therefore affects a bounded number of bits for each fixed profile radius. The bounded-difference variance estimate and mesh argument of Section 6 apply, with interval counts bounded by 190 times the original counts. This provides one realization valid at every threshold. Ties cost at most 190 more matching edges, and Lemma 3.2 adds six. Taking the profile and graph-size limits for each odd path truncation gives the stated bound relative to Γ. Sections 8–10 of the graph proof extend it to all cubic multigraphs with a uniform sublinear remainder.
+These follow by the four star identities: at $u$ the only residual is the root defect divided by three; at $w,w'$ the absolute midpoint residual is at most $(\lambda/6+1/2)r$; at a child of $w$ it is at most $(\lambda/2)(.972r)+(1/6+1/2)r$. Conditional standard deviations do not increase. The centered Gaussian rectangle inequality gives the product of the seven individual strip probabilities as a lower bound, also when the residuals are singular. This is Šidák's inequality: given one coordinate $X=s$, the remaining vector has law $W+vs$ for centered independent Gaussian $W$. Gaussian measure of a symmetric rectangle translated along a line decreases with $|s|$ by layer cake over centered Gaussian level ellipsoids and Brunn–Minkowski applied to the intersections. Thus conditioning on $|X|\le d$ increases the rectangle probability. Induct and take a vanishing independent-noise limit for singular covariance.
 
+For tolerances $.01800,.02504,.03365$ the per-defect masses exceed $.748,.889,.967$ respectively, since their standardized thresholds exceed $1.15,1.60,2.15$. Integrating the odd Taylor lower polynomial of order 11 for $e^{-v^2/2}$, with factor $.797<\sqrt{2/\pi}$, gives these bounds. The individual half-difference probabilities exceed $H(3.46d_i)$, where $H(u)=.797v(1-v^2/6+v^4/40-v^6/336)$ and $v=\min(1.6,\max(0,u))$. This is the integrated odd Taylor bound of order three for the exponential.
 
-**Theorem 7.1.** For every positive epsilon there is N_epsilon such that every connected simple cubic graph H on n>=N_epsilon vertices satisfies cw(H)<=(gamma+epsilon)n. Apply the preceding proof with the fixed J=47 and Gamma_47 < 0.130647566423167665. All cutoffs are uniform in the input graph. The following reductions complete the proof of Theorem 1.
+`certify.py` (the `all_center_trigger` function) partitions $[0,.2]\times[0,3.6]\times[0,6.8]$ with cell widths $1/250,1/50,1/50$. Negate the worst box endpoints of the six rows to get margins $A,B,C,D,M,N$. Retain $C,N>.972r$, $M>r/3$, and $D>2.043r$. Put $U=\min(A-r/3,(B-r/2)/1.415-r/3)$; try $d_1=.5U,.8U$, $d_2=B-r/2-1.415(d_1+r/3)$, $d_3=D-2.043r$, retaining positive cases. Take the best of the lower bounds for these centered boxes and multiply by the density lower bound from the upper cell endpoints and $|t+x|\le T+x$. For each exponential use $e^{-u}\ge(1-u/4096)^{4096}$ with downward rounding after successive squaring. Before evaluating each strip the nonnegative standardized argument is rounded down to a multiple of 1/10000. For each x,y cell, the positive-margin constraints are affine inequalities in the integer z index and their intersection can be enumerated directly. These are equivalent to skipping cells with a nonpositive integer margin. The exact sum returns floors $224201878$ and $1345211272$ after multiplying the single-orientation and six-orientation bounds respectively by $10^{15}$.
+
+#### Outer thresholds
+
+Let $X$ be the profile field on the sufficiently high-girth finite cover, with independent tie noise, covariance $C$ and $M(t)=\mathbb E F(\{i:X_i<t\})$. Write $D_iF$ for a first discrete difference and $\Delta_{ij}F$ for its mixed difference. For each $i$ put $W_j=X_j-C_{ij}X_i$, $k_j=1-C_{ij}\ge0$. With $b_j(s)=1[W_j<k_js]$ write $g_i(s)=\mathbb E D_iF(b(s))$. The $i$th threshold derivative contributes $\phi(t)g_i(t)$ to $M'(t)$, since $W$ is independent of $X_i$. Gaussian sign symmetry and complement symmetry of $F$ give $g_i(-t)=-g_i(t)$. Moving each threshold boundary gives
+
+\[
+ 2 g_i(t)=\int_{-t}^t\sum_{j\ne i} k_j f_{W_j}(k_js)\,\mathbb E[\Delta_{ij}F(b(s))\mid W_j=k_js]\,ds.
+\]
+
+This differentiation involves finite smooth Gaussian orthant integrals. All terms are nonpositive by submodularity. At an adjacent $j$ one has $k_j\in(.056,.058)$ for accurate finite parameters and $\operatorname{sd}(W_j)=\sqrt{1-C_{ij}^2}\in(.32,.35)$, hence $f_{W_j}(k_js)>1.1$ for $|s|\le T$. The private-leaf adjacent pivotal witness, conditional on $X_i=X_j=0$, has probability at least $.0179$ with exterior margins $.039$ and forces $\Delta_{ij}F\le-1$. This is exactly the finite-cover zero-conditional witness used for the adjacent Price comparison. The same residual event is pivotal in the integrand. Indeed conditioning on $W_j=k_js$ shifts the conditional exterior means by $L_{v,j} k_js$, where the endpoint-pair regression row $L_v$ has $\ell_1$ norm below $2.5$ on the finite patch. The other threshold shifts by $k_v s$. All witness vertices have distance at most four from $i$, so $k_v<.418$ since $w_4=7/12$. The net displacement is at most $(.418+2.5\cdot .058)T<.031<.039$. Thus the original margin event works throughout the integration. The field conditioned on $W_j=0$ here has the same relevant residual law as that conditioned on $(X_i,X_j)=(0,0)$ because $W$ is independent of $X_i$.
+
+Summing the three adjacent $j$ and all $i$, with $\phi(t)>.39$ on $[0,T]$, yields $M'(t)\le-3n(.39)(.056)(1.1)(.0179)t$. Consequently $M(0)-M(T)\ge 3n(.39)(.056)(1.1)(.0179)T^2/2>1.9\,10^{-6}n$. By evenness and threshold monotonicity the same credit holds for all $|t|\ge T$. Gaussian covariance comparison, normalized by the cover degree, transfers this upper bound from the high-girth cover to the original base field at each threshold. Advancement can only decrease it. The original concentration and layout conversion complete the claim.
+
+For each fixed odd J, choose the radial parameter, finite truncation and tie noise as in Section 7.2 with errors smaller than any prescribed positive tolerance simultaneously. In Section 6 the original cover crossing expectation at zero is at most (Gamma_J+epsilon)n after division by covering degree. At central thresholds combine the unretimed base bound and the additional local savings on that same base. At outer thresholds compare the base and the cover at the same threshold before applying the cover's strict threshold decrease. The new keys depend on original keys within radius three, and each is equal to some original key there. At every fixed threshold the change from one independent input can therefore alter only a bounded number of final bits for a fixed truncation radius. The matching value is 1-Lipschitz in each bit. Its variance is O_R(n); use Section 6's mesh with at most 22 times the original count of keys in any mesh interval or tail. Resolving ties costs at most 22 and the layout conversion adds six. These steps give the claimed asymptotic comparison for every fixed odd J. Taking their infimum gives the result relative to Gamma.
+
+**Theorem 7.1.** For every positive epsilon and every sufficiently large connected simple cubic graph H on n vertices, cw(H) <= (gamma+epsilon)n. Use J=27 and Gamma_27 < 0.130647566425 from certificate.md. All choices are uniform in H.
 
 ## 8. Kernel compression
 

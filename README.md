@@ -1,24 +1,20 @@
-# Cubic cutwidth by retiming a Gaussian vertex ordering
+# A cubic cutwidth bound from distance-two pairs
 
-For every cubic graph on $n$ vertices, the vertices admit an ordering with at most $0.130647519423167665n+o(n)$ edges crossing its busiest gap. The sublinear remainder is uniform over all such graphs. The proof also covers cubic multigraphs. The previous version gave $0.130647546423167665n+o(n)$. [Short proof of the improvement](research/two-pass-bound.md) · [Full graph theorem](submission/cutwidth.md#0-statement-and-proof-map)
+For every cubic graph on $n$ vertices, the vertices admit an ordering with at most **$0.130646316425n+o(n)$** edges crossing its busiest gap. The sublinear error is uniform over cubic multigraphs. The previous Yukon-reviewed bound was $0.130647546423167665n+o(n)$. [Graph proof](submission/cutwidth.md#0-statement-and-proof-map)
 
-## Bound and circuit consequence
+## What improved
 
-Write $\kappa$ for the asymptotic worst-case cutwidth per vertex and $\Gamma$ for the limiting coefficient from the earlier Gaussian crossing-cover method. We prove $\kappa\leq\Gamma-4.7\times10^{-8}$. In the McGuire–Schlesinger–Williams normalization, $M=2\kappa\leq0.261295038846335330$. Their kernel-to-circuit theorem applies this universal graph bound to Li's function. For the separate validated-prefix norm-graph language entered in CircuitBreaker, the eventual full-binary-basis circuit lower bound is **$4.82709141518790465583497877634923n$**. [Original transfer theorem](https://github.com/rrwilliams0/circuit-lb-4.6155n/blob/a56500014ba159397903dea81d41ac836f6880d5/proof.md#24-kernels-and-the-reduction-from-circuits-to-kernels) · [CircuitBreaker proof](submission/proof.md)
+Write $\kappa$ for the asymptotic worst-case cutwidth per vertex. The proof gives $\kappa\leq\Gamma-0.00000125$, where $\Gamma$ is the limiting coefficient of the previous Gaussian crossing-cover method. Our earlier submissions gave structural savings of $10^{-14}$ and $2\times10^{-8}$. The increase from $2\times10^{-8}$ to $1.25\times10^{-6}$ is a factor of 62.5. In the normalization of McGuire, Schlesinger and Williams the new upper bound is $M=2\kappa\leq0.26129263285$. [Finite certificate](submission/certificate.md) · [Original reduction for Li's function](https://github.com/rrwilliams0/circuit-lb-4.6155n/blob/a56500014ba159397903dea81d41ac836f6880d5/proof.md#24-kernels-and-the-reduction-from-circuits-to-kernels)
 
-## Why two passes help
+Across a gap, some crossing edges can be chosen without sharing endpoints. The proof moves vertices earlier when one of several local neighborhoods guarantees that this number decreases. It also counts pairs of vertices that share a neighbor. A sum-of-squares identity shows how much those pairs can contribute when nearby scores are more correlated than in the tree model. A separate threshold estimate controls all the other gaps in the same ordering. [Local ordering and threshold argument](submission/cutwidth.md#75-all-center-advancement-nine-edge-charging-and-strict-threshold-decrease) · [Distance-two matching and covariance proof](submission/certificate.md#8-integrated-credit-from-adjacent-and-distance-two-pairs)
 
-In the first pass some vertices move earlier. In the second, eligible vertices move later using the updated order. Every successful move at a threshold decreases the maximum number of disjoint crossing edges there by one. Splitting the two directions into successive passes lets more vertices participate. Counting only the nine edges that the local probability estimate uses also strengthens the guarantee for graphs with few eligible vertices. [Two-pass argument](submission/cutwidth.md#76-two-passes-on-nine-edge-patches)
+For the fixed validated-prefix norm-graph language entered in Yukon, the eventual full-binary-basis circuit lower bound is **$4.82712665524737162523485973592385n$**, where $n$ counts the entire input length. [Circuit theorem](submission/proof.md)
 
-## Reproduction
+## Reproduction and review
 
-Run `python -I -B submission/certify.py` from the repository root. The program uses the Python standard library. It encloses 47 Gaussian probabilities and checks the exact rational constants used by the proof. [Certificate derivation](submission/certificate.md) · [Reference output](research/certificate-output.json)
+Run `python -I -B submission/certify.py` from the repository root. The Python standard-library program checks the 26th and 27th alternating sums, the local sign-event probability, both integrated covariance contributions, and the final rational margins. The complete outputs agree on Windows and Linux. An independent Codex agent audited the proof and reran the executable. [Reference output](research/certificate-output.json)
 
-## Versions and review
-
-Yukon's primary hosted reviewer marked the $2\times10^{-8}$ revision valid. Its container reproduced every finite-certificate output in 14.5 seconds. A separate automated audit timed out during final adjudication. The public entry is in review with no human verdict recorded. [Yukon judgment](https://api.yukon.org/api/submissions/60c7a1c3-9b1a-4c29-ad98-5de7c3ef351b) · [Hosted evaluation](https://github.com/Layr-Labs/circuitbreaker-llm-verifier/actions/runs/44235424767)
-
-The first version established a $10^{-14}$ saving. Its separate hosted evaluation also marked it valid. [First proof](https://github.com/Puthranps/cubic-cutwidth-retiming/tree/7b0d2587b3da62877fea4fae2d4fa9a370f3919f) · [First official judgment](https://api.yukon.org/api/submissions/4c133ffa-7452-42c6-9629-d7821ee890d4)
+An intermediate two-pass proof gave $\kappa\leq0.130647519423167665$. The preceding version with a $2\times10^{-8}$ saving received a valid primary automated judgment on Yukon. [Two-pass proof](research/two-pass-bound.md) · [Previous Yukon judgment](https://api.yukon.org/api/submissions/60c7a1c3-9b1a-4c29-ad98-5de7c3ef351b) · [First submitted version](https://api.yukon.org/api/submissions/4c133ffa-7452-42c6-9629-d7821ee890d4)
 
 Puthranps selected Williams's challenge, directed the AI investigation and requested a check that it advanced the existing bound. OpenAI Codex agents developed the new argument, wrote the reproduction code and performed the internal proof critiques.
 
