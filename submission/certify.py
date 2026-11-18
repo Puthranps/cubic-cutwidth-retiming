@@ -415,12 +415,17 @@ def main():
  pivotal_floor = pivotal_certificate()
  good_floor = check_good_centers()
  edge_floor = check_edge_credit()
+ from fractions import Fraction as F
+ q = F(good_floor, 10**15)
+ K = F(edge_floor, 10**18)
+ assert F(4,5)**7 > F(1,5)
+ assert min(q/5, F(99,100)*F(17,40000)*K/6) > F(47,10**9)
  passed = previous_even > lower_target and gamma.b < upper_target
  print(json.dumps({
   'certified': passed, 'N': N, 'J': J, 'L': L, 'precision': P, 'fixed_point_bits': FP,
   'gamma_odd_lower': str(gamma.a), 'gamma_odd_upper': str(gamma.b),
   'gamma_even_lower': str(previous_even), 'target_series_upper': str(upper_target),
-  'structural_saving_proved_in_manuscript': '0.00000002', 'good_floor_scaled_1e15': good_floor, 'integrated_edge_floor_scaled_1e18': edge_floor, 'pivotal_floor_scaled_1e12': pivotal_floor,
+  'structural_saving_proved_in_manuscript': '0.000000047', 'good_floor_scaled_1e15': good_floor, 'integrated_edge_floor_scaled_1e18': edge_floor, 'pivotal_floor_scaled_1e12': pivotal_floor,
   'intervals': results
  }))
  return 0 if passed else 1

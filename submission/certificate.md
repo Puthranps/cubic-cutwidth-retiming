@@ -528,7 +528,7 @@ Run the standard-library program with Python 3 and its default parameters. The d
     0.1306475664231676642 < Gamma_46 <= Gamma
         <= Gamma_47 < 0.130647566423167665.
 
-The even lower and the odd upper are separate comparisons in the code. The graph constant also uses the 0.00000002 saving proved in cutwidth.md Section 7.5. A separate exact rational Riemann sum in the same executable gives a floor of 18079200775 for 10^12 times its two-private-edge event lower sum. The corresponding probability is greater than .018 as used in the structural proof.
+The even lower and the odd upper are separate comparisons in the code. The graph constant also uses the 0.000000047 saving proved in cutwidth.md Section 7.6. A separate exact rational Riemann sum in the same executable gives a floor of 18079200775 for 10^12 times its two-private-edge event lower sum. The corresponding probability is greater than .018 as used in the structural proof.
 
     python -I -B certify.py
 
@@ -732,3 +732,5 @@ For each cell the checker subtracts 10^(-9) from its Q lower bound, multiplies b
 The integers at scale 10^18 for the one-orientation integral and per-edge credit are respectively 715856786297553 and 672905379119700, rounded down. To pass from the former to the latter, double it and multiply by the adjacent zero-pair density lower bound .47 (the cover's limiting correlation rho gives density 3/(2pi)). No simulation is used.
 
 An edge can be observed by at most 14 root centers (one of its endpoints must be within distance two, giving at most 2+4+8 preimages of those centers). Therefore at heavy-edge threshold eta a base graph with g good centers has sum_e D_e >= (n-g)eta/14. Uniformly approximate each heavy excess to retain .99eta and add the simultaneous good-center retiming credit qg/15. The asymptotic saving is thus at least min(q/15, 0.0000475840232377502 eta), up to the additional explicitly chosen numerical slack.
+
+The executable also checks the two-pass rational comparisons used by Section 7.6 of cutwidth.md. The probability estimates of Sections 8–9 are the same ones used in the preceding submission.

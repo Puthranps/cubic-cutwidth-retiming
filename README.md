@@ -1,30 +1,18 @@
 # Cubic cutwidth by retiming a Gaussian vertex ordering
 
-A two-pass ordering now gives $\kappa\le 0.130647519423167665$, a further decrease of $2.7\times10^{-8}$ from the Yukon-reviewed result below. It uses the same numerical certificate. [Proof of the two-pass bound](research/two-pass-bound.md)
-
-In a cubic graph layout, list the vertices from left to right and count the edges crossing each gap. The largest count is the width of the layout. This research fork gives an AI-assisted proof of an improvement of **at least $2\times10^{-8}$ in the asymptotic cutwidth per vertex** over the limiting value of the previous Gaussian crossing-cover method. [Graph theorem](submission/cutwidth.md#0-statement-and-proof-map)
+For every cubic graph on $n$ vertices, the vertices admit an ordering with at most $0.130647519423167665n+o(n)$ edges crossing its busiest gap. The sublinear remainder is uniform over all such graphs. The proof also covers cubic multigraphs. The previous version gave $0.130647546423167665n+o(n)$. [Short proof of the improvement](research/two-pass-bound.md) · [Full graph theorem](submission/cutwidth.md#0-statement-and-proof-map)
 
 ## Bound and circuit consequence
 
-Let $\kappa$ be the limsup, over even $n$, of the largest cutwidth divided by $n$ among cubic multigraphs on $n$ vertices. Write $\Gamma$ for the earlier method's limiting alternating-path coefficient. The proof gives
+Write $\kappa$ for the asymptotic worst-case cutwidth per vertex and $\Gamma$ for the limiting coefficient from the earlier Gaussian crossing-cover method. We prove $\kappa\leq\Gamma-4.7\times10^{-8}$. In the McGuire–Schlesinger–Williams normalization, $M=2\kappa\leq0.261295038846335330$. Their kernel-to-circuit theorem applies this universal graph bound to Li's function. For the separate validated-prefix norm-graph language entered in CircuitBreaker, the eventual full-binary-basis circuit lower bound is **$4.82709141518790465583497877634923n$**. [Original transfer theorem](https://github.com/rrwilliams0/circuit-lb-4.6155n/blob/a56500014ba159397903dea81d41ac836f6880d5/proof.md#24-kernels-and-the-reduction-from-circuits-to-kernels) · [CircuitBreaker proof](submission/proof.md)
 
-$$\kappa\leq\Gamma-2\times10^{-8},\qquad \kappa\leq 0.130647546423167665.$$
+## Why two passes help
 
-The first bound measures what changes in the ordering. The second uses a rational upper bound on $\Gamma$. In the normalization of McGuire, Schlesinger and Williams this gives $M=2\kappa\leq 0.261295092846335330$. Their kernel-to-circuit theorem applies this graph bound to Li's function. [Original Theorem K2C](https://github.com/rrwilliams0/circuit-lb-4.6155n/blob/a56500014ba159397903dea81d41ac836f6880d5/proof.md#24-kernels-and-the-reduction-from-circuits-to-kernels)
-
-The CircuitBreaker entry uses the earlier validated-prefix norm-graph language. The eventual full-binary-basis circuit bound is **$4.82709062427011829815939834410753\,n$**, counting the entire input length. The preceding public entry by DarkWingMcQuack gave $4.827090038405301192\ldots\,n$. The difference in the two circuit coefficients is about $5.86\times10^{-7}$. Prior work accounts for the improvement from Williams's original $4.6155$ to the preceding $4.82709$. [Circuit proof](submission/proof.md) · [Preceding entry](https://api.yukon.org/api/submissions/3f2be7ea-aa22-4f7e-98e9-23b40557dbcf)
-
-## Where the gain comes from
-
-At a threshold of a vertex ordering, the edges with one endpoint on either side form a bipartite graph. A pattern of seven nearby vertices certifies that moving a center across the threshold saves exactly one unit of maximum matching size. A compatible set of centers can move simultaneously. Where the local Gaussian law is close enough to the cubic-tree wave, a three-dimensional integral bounds the frequency of that pattern. Where it deviates, the excess in adjacent correlations yields a separate decrease in the original matching-size bound. The two savings add on the same graph. [Local ordering rule](submission/cutwidth.md#71-a-local-change-in-a-vertex-ordering) · [Good-center calculation](submission/certificate.md#8-a-quantitative-probability-bound-at-good-centers) · [Covariance interpolation](submission/certificate.md#9-integrated-covariance-gain-at-a-heavy-edge)
+In the first pass some vertices move earlier. In the second, eligible vertices move later using the updated order. Every successful move at a threshold decreases the maximum number of disjoint crossing edges there by one. Splitting the two directions into successive passes lets more vertices participate. Counting only the nine edges that the local probability estimate uses also strengthens the guarantee for graphs with few eligible vertices. [Two-pass argument](submission/cutwidth.md#76-two-passes-on-nine-edge-patches)
 
 ## Reproduction
 
-Run the following from the repository root with Python 3.12 or later. The complete finite certificate uses the Python standard library.
-
-    python -I -B submission/certify.py
-
-The program checks the two alternating path-sum enclosures, the preparatory matching event, the good-center lower sum, and the integrated edge credit. It emits one JSON record with all 47 probability intervals and the key integer floors. The paper supplies the graph and circuit arguments that connect those finite checks to the asymptotic claims. [Certificate derivation](submission/certificate.md) · [Reference output](research/certificate-output.json)
+Run `python -I -B submission/certify.py` from the repository root. The program uses the Python standard library. It encloses 47 Gaussian probabilities and checks the exact rational constants used by the proof. [Certificate derivation](submission/certificate.md) · [Reference output](research/certificate-output.json)
 
 ## Versions and review
 
