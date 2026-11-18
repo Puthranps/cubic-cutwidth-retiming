@@ -26,6 +26,10 @@ The program checks the two alternating path-sum enclosures, the preparatory matc
 
 ## Versions and review
 
-The first version established a $10^{-14}$ saving. Yukon's hosted reviewer marked it valid and its hosted run reproduced every finite output. The stronger version above quantifies both graph cases more sharply. All versions are AI-assisted research, and the public Yukon records report the current review state. [First proof](https://github.com/Puthranps/cubic-cutwidth-retiming/tree/7b0d2587b3da62877fea4fae2d4fa9a370f3919f) · [First official judgment](https://api.yukon.org/api/submissions/4c133ffa-7452-42c6-9629-d7821ee890d4) · [CircuitBreaker](https://www.yukon.org/circuitbreaker)
+Yukon's primary hosted reviewer marked the $2\times10^{-8}$ revision valid. Its container reproduced every finite-certificate output in 14.5 seconds. A separate automated audit timed out during final adjudication. The public entry is in review with no human verdict recorded. [Yukon judgment](https://api.yukon.org/api/submissions/60c7a1c3-9b1a-4c29-ad98-5de7c3ef351b) · [Hosted evaluation](https://github.com/Layr-Labs/circuitbreaker-llm-verifier/actions/runs/44235424767)
+
+The first version established a $10^{-14}$ saving. Its separate hosted evaluation also marked it valid. [First proof](https://github.com/Puthranps/cubic-cutwidth-retiming/tree/7b0d2587b3da62877fea4fae2d4fa9a370f3919f) · [First official judgment](https://api.yukon.org/api/submissions/4c133ffa-7452-42c6-9629-d7821ee890d4)
+
+Puthranps selected Williams's challenge, directed the AI investigation and requested a check that it advanced the existing bound. OpenAI Codex agents developed the new argument, wrote the reproduction code and performed the internal proof critiques.
 
 McGuire, Schlesinger and Williams supplied the circuit-to-cutwidth reduction. Arthur Ostapenko, mooselumph and earlier CircuitBreaker contributors developed the norm-graph, prefix and comparison framework. Galarnon42 supplied the global crossing-cover optimization and finite path bound. DarkWingMcQuack and the preceding contributors supplied the immediate coefficient and exact arithmetic framework. [Complete references](submission/proof.md#6-sources-and-reproduction)
